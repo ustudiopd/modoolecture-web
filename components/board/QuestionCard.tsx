@@ -124,3 +124,5 @@ export default function QuestionCard({ question, onVote, voted = false }: Questi
   );
 }
 
+
+

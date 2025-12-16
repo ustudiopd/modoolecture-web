@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>모두의특강 - 2025 AI 결산 질문 보드</title>
+    
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons (CDN) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Custom Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Pretendard', 'sans-serif'],
+                    },
+                    colors: {
+                        slate: {
+                            950: '#020617',
+                        }
+                    },
+                    animation: {
+                        'fade-in-down': 'fadeInDown 0.5s ease-out',
+                    },
+                    keyframes: {
+                        fadeInDown: {
+                            '0%': { opacity: '0', transform: 'translate(-50%, -20px)' },
+                            '100%': { opacity: '1', transform: 'translate(-50%, 0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
+        
+        body { font-family: 'Pretendard', sans-serif; }
+        
+        /* Hide scrollbar for category list */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen selection:bg-purple-500 selection:text-white pb-20">
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-5 left-1/2 transform -translate-x-1/2 z-50 pointer-events-none transition-opacity duration-300 opacity-0">
+        <div class="bg-purple-600 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2 text-sm font-bold border border-purple-400/50">
+            <i data-lucide="sparkles" class="text-yellow-300 w-4 h-4"></i>
+            <span id="toast-message">알림 메시지</span>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="relative overflow-hidden border-b border-slate-800 bg-slate-950">
+        <div class="absolute inset-0 bg-gradient-to-r from-purple-900/20 to-blue-900/20 z-0"></div>
+        <div class="max-w-4xl mx-auto px-4 py-12 relative z-10 text-center">
+            
+            <!-- Breadcrumb / Back Link -->
+            <div class="absolute top-4 left-4 md:left-0">
+                <a href="index.html" class="flex items-center gap-1 text-slate-500 hover:text-white transition-colors text-sm">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> 메인으로
+                </a>
+            </div>
+
+            <div class="inline-block px-3 py-1 bg-slate-800 rounded-full text-xs text-purple-400 font-mono mb-4 border border-purple-500/30">
+                2025. 12. 17 (WED) 19:00 Live
+            </div>
+            <h1 class="text-3xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-200 to-blue-200 mb-4 tracking-tight">
+                2025 AI 결산 질문 보드
+            </h1>
+            <p class="text-slate-400 max-w-2xl mx-auto mb-8 text-sm md:text-base leading-relaxed">
+                사전 설문으로 모인 <strong>200개의 진짜 고민</strong>을 확인하세요.<br class="hidden md:block"/>
+                투표하고, 토론하고, <strong>복사해서 AI에게 물어보세요.</strong>
+            </p>
+            
+            <div class="flex flex-col sm:flex-row justify-center gap-3">
+                <button onclick="window.open('https://notebooklm.google.com', '_blank')" 
+                    class="flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white px-6 py-3 rounded-lg font-bold transition-all shadow-lg shadow-blue-900/30 group">
+                    <i data-lucide="message-circle" class="w-5 h-5"></i>
+                    <span>전체 질문 AI 챗봇 (NotebookLM)</span>
+                    <i data-lucide="external-link" class="w-4 h-4 opacity-50 group-hover:translate-x-1 transition-transform"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-8">
+        
+        <!-- Controls (Sticky) -->
+        <div class="sticky top-0 bg-slate-950/90 backdrop-blur-md py-4 z-40 space-y-4 mb-6 border-b border-slate-800">
+            <div class="flex flex-col md:flex-row gap-3 justify-between">
+                <!-- Search -->
+                <div class="relative flex-1">
+                    <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 w-5 h-5"></i>
+                    <input 
+                        type="text" 
+                        id="search-input"
+                        placeholder="관심 키워드 검색 (예: RAG, 윤리, 취업...)" 
+                        class="w-full bg-slate-900 border border-slate-700 text-slate-200 pl-10 pr-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all placeholder:text-slate-600"
+                    >
+                </div>
+                
+                <!-- Sort -->
+                <div class="flex items-center gap-3">
+                    <select id="sort-select" class="bg-slate-900 border border-slate-700 text-slate-300 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 cursor-pointer w-full md:w-auto">
+                        <option value="hot">🔥 인기 질문순</option>
+                        <option value="new">🆕 최신 등록순</option>
+                        <option value="answered">✅ 답변 완료순</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Categories -->
+            <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide" id="category-container">
+                <!-- Categories will be injected by JS -->
+            </div>
+        </div>
+
+        <!-- Question Grid -->
+        <div id="question-grid" class="grid gap-4">
+            <!-- Cards will be injected by JS -->
+        </div>
+
+        <!-- Loading State (Hidden by default) -->
+        <div id="loading-state" class="hidden text-center py-20">
+            <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-500 mx-auto mb-4"></div>
+            <p class="text-slate-500">질문을 불러오는 중입니다...</p>
+        </div>
+
+        <!-- Empty State (Hidden by default) -->
+        <div id="empty-state" class="hidden text-center py-20 bg-slate-900/50 rounded-xl border border-dashed border-slate-800">
+            <i data-lucide="search-x" class="w-12 h-12 text-slate-600 mx-auto mb-4"></i>
+            <p class="text-slate-500">검색 결과가 없습니다.<br>다른 키워드로 검색해보세요!</p>
+        </div>
+
+    </main>
+
+    <!-- Floating Action Button (Mobile) -->
+    <div class="fixed bottom-6 right-6 md:hidden z-30">
+        <button onclick="showToast('질문 등록 기능은 준비 중입니다!')" class="bg-purple-600 text-white p-4 rounded-full shadow-lg shadow-purple-900/50 hover:bg-purple-500 transition-transform active:scale-95">
+           <i data-lucide="plus" class="w-6 h-6"></i>
+        </button>
+    </div>
+
+    <!-- Script: Data & Logic -->
+    <script>
+        // --- Mock Data ---
+        const categories = ['All', 'Tech/Dev', 'Business', 'Career', 'Ethics', 'Prompt'];
+        
+        const questionsData = [
+            {
+                id: 1,
+                title: "RAG 구현 시 할루시네이션 잡는 법",
+                content: "기업 내부 데이터로 RAG를 구축했는데, 가끔 엉뚱한 문서에서 답을 가져옵니다. 프롬프트 엔지니어링으로 해결할 수 있는 노하우가 있을까요? 아니면 파인튜닝이 필수일까요?",
+                answer: "System Prompt에 '모르면 모른다고 대답하라'는 제약 조건을 강력하게 걸고, Temperature를 0에 가깝게 설정하세요. 검색된 청크(Chunk)의 신뢰도 점수를 필터링하는 단계가 필요합니다.",
+                category: "Tech/Dev",
+                votes: 42,
+                comments: 5,
+                date: "2025-12-10",
+                answered: true
+            },
+            {
+                id: 2,
+                title: "AI 에이전트로 1인 창업 가능한가요?",
+                content: "개발 지식이 얕은 기획자입니다. Cursor나 v0 같은 툴만 믿고 SaaS를 만들어보려고 하는데, 실제 운영 단계에서 AI 에이전트만으로 유지보수가 가능할지 현실적인 조언 부탁드립니다.",
+                answer: null, 
+                category: "Business",
+                votes: 38,
+                comments: 12,
+                date: "2025-12-12",
+                answered: false
+            },
+            {
+                id: 3,
+                title: "2026년 프롬프트 엔지니어의 미래",
+                content: "AI 모델이 점점 똑똑해져서 '개떡같이 말해도 찰떡같이' 알아듣는데, 프롬프트 엔지니어링이라는 직무가 계속 유효할까요? 커리어를 어떻게 전환해야 할까요?",
+                answer: "단순한 프롬프트 작성이 아니라, AI 워크플로우를 설계하고 평가(Eval)하는 'AI 오케스트레이터'로 역할이 진화하고 있습니다.",
+                category: "Career",
+                votes: 31,
+                comments: 8,
+                date: "2025-12-14",
+                answered: true
+            },
+            {
+                id: 4,
+                title: "사내 AI 도입 시 보안 가이드라인",
+                content: "직원들이 ChatGPT에 기밀 데이터를 넣는 걸 막을 수가 없습니다. 엔터프라이즈 버전을 쓰는 것 외에 정책적으로나 기술적으로 제어할 수 있는 방법이 궁금합니다.",
+                answer: null,
+                category: "Ethics",
+                votes: 25,
+                comments: 3,
+                date: "2025-12-11",
+                answered: false
+            },
+            {
+                id: 5,
+                title: "AI가 생성한 코드의 저작권 문제",
+                content: "Copilot으로 짠 코드로 상용 소프트웨어를 출시했을 때, 나중에 법적인 문제가 생길 소지가 있나요? 최근 판례나 동향이 궁금합니다.",
+                answer: "아직 명확한 국제 표준은 없으나, 인간의 창작적 기여가 인정되는 부분에 한해 저작권을 인정하는 추세입니다.",
+                category: "Ethics",
+                votes: 19,
+                comments: 2,
+                date: "2025-12-09",
+                answered: true
+            }
+        ];
+
+        // --- State ---
+        let state = {
+            searchTerm: '',
+            category: 'All',
+            sortBy: 'hot',
+            questions: [...questionsData]
+        };
+
+        // --- Logic ---
+
+        function init() {
+            renderCategories();
+            renderQuestions();
+            setupEventListeners();
+            lucide.createIcons();
+        }
+
+        function renderCategories() {
+            const container = document.getElementById('category-container');
+            container.innerHTML = categories.map(cat => `
+                <button 
+                    onclick="setCategory('${cat}')"
+                    class="px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                        state.category === cat 
+                        ? 'bg-purple-600 text-white' 
+                        : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-slate-200'
+                    }"
+                >
+                    ${cat}
+                </button>
+            `).join('');
+        }
+
+        function renderQuestions() {
+            const grid = document.getElementById('question-grid');
+            const emptyState = document.getElementById('empty-state');
+            
+            // Filter
+            let filtered = state.questions.filter(q => {
+                const matchSearch = (q.title + q.content).toLowerCase().includes(state.searchTerm.toLowerCase());
+                const matchCat = state.category === 'All' || q.category === state.category;
+                return matchSearch && matchCat;
+            });
+
+            // Sort
+            if (state.sortBy === 'hot') {
+                filtered.sort((a, b) => b.votes - a.votes);
+            } else if (state.sortBy === 'new') {
+                filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+            } else if (state.sortBy === 'answered') {
+                filtered.sort((a, b) => Number(b.answered) - Number(a.answered));
+            }
+
+            // Render
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                grid.innerHTML = filtered.map(q => `
+                    <div class="group bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-purple-500/50 transition-all hover:shadow-lg hover:shadow-purple-900/10 animate-fade-in-down">
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 bg-slate-800 text-slate-400 text-xs rounded border border-slate-700 font-mono">
+                                    #${q.category}
+                                </span>
+                                ${q.answered ? `
+                                    <span class="flex items-center gap-1 text-green-400 text-xs font-bold px-2 py-0.5 bg-green-900/20 rounded">
+                                        <i data-lucide="check-circle-2" class="w-3 h-3"></i> 답변완료
+                                    </span>
+                                ` : ''}
+                            </div>
+                            <button 
+                                onclick="copyMarkdown(${q.id})"
+                                class="flex items-center gap-1.5 bg-slate-800 hover:bg-purple-600 text-slate-300 hover:text-white px-3 py-1.5 rounded text-xs font-medium transition-colors border border-slate-700 hover:border-purple-500"
+                                title="ChatGPT용 Markdown 복사"
+                            >
+                                <i data-lucide="copy" class="w-3 h-3"></i>
+                                MD 복사
+                            </button>
+                        </div>
+
+                        <h3 class="text-lg font-bold text-white mb-2 leading-snug group-hover:text-purple-300 transition-colors cursor-pointer">
+                            ${q.title}
+                        </h3>
+                        <p class="text-slate-400 text-sm mb-4 leading-relaxed line-clamp-3">
+                            ${q.content}
+                        </p>
+
+                        ${q.answer ? `
+                            <div class="mb-4 bg-slate-800/50 rounded-lg p-3 border-l-2 border-green-500">
+                                <div class="flex items-center gap-2 mb-1 text-xs text-green-400 font-bold">
+                                    <i data-lucide="message-square" class="w-3 h-3"></i> EXPERT ANSWER
+                                </div>
+                                <p class="text-slate-300 text-sm line-clamp-2">
+                                    ${q.answer}
+                                </p>
+                            </div>
+                        ` : ''}
+
+                        <div class="flex items-center justify-between border-t border-slate-800 pt-3 mt-2">
+                            <div class="flex gap-4 text-sm text-slate-500">
+                                <button onclick="vote(${q.id})" class="flex items-center gap-1.5 hover:text-purple-400 transition-colors">
+                                    <i data-lucide="thumbs-up" class="w-4 h-4 ${q.votes > 0 ? 'fill-current text-purple-500/50' : ''}"></i>
+                                    <span>${q.votes}</span>
+                                </button>
+                                <div class="flex items-center gap-1.5">
+                                    <i data-lucide="message-circle" class="w-4 h-4"></i>
+                                    <span>${q.comments}</span>
+                                </div >
+                            </div>
+                            <span class="text-xs text-slate-600 font-mono">${q.date}</span>
+                        </div>
+                    </div>
+                `).join('');
+                lucide.createIcons(); // Refresh icons
+            }
+        }
+
+        function setupEventListeners() {
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                state.searchTerm = e.target.value;
+                renderQuestions();
+            });
+
+            document.getElementById('sort-select').addEventListener('change', (e) => {
+                state.sortBy = e.target.value;
+                renderQuestions();
+            });
+        }
+
+        // Global Actions (exposed to window)
+        window.setCategory = (cat) => {
+            state.category = cat;
+            renderCategories(); // Update button styles
+            renderQuestions();
+        };
+
+        window.vote = (id) => {
+            // Optimistic UI update
+            const idx = state.questions.findIndex(q => q.id === id);
+            if (idx > -1) {
+                state.questions[idx].votes += 1;
+                renderQuestions();
+                showToast("👍 소중한 한 표가 반영되었습니다!");
+            }
+        };
+
+        window.copyMarkdown = (id) => {
+            const q = state.questions.find(q => q.id === id);
+            if (!q) return;
+
+            const mdContent = `
+# 주제: ${q.title}
+
+## ❓ 질문 내용
+${q.content}
+
+## 💡 전문가 답변
+${q.answer ? q.answer : '(아직 답변이 등록되지 않았습니다.)'}
+
+---
+*출처: 모두의특강 2025 AI 결산 질문 보드*
+            `.trim();
+
+            navigator.clipboard.writeText(mdContent).then(() => {
+                showToast("📋 Markdown 복사 완료! ChatGPT에 붙여넣으세요.");
+            }).catch(() => {
+                // Fallback
+                const ta = document.createElement('textarea');
+                ta.value = mdContent;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                showToast("📋 Markdown 복사 완료!");
+            });
+        };
+
+        window.showToast = (msg) => {
+            const toast = document.getElementById('toast-container');
+            const msgEl = document.getElementById('toast-message');
+            msgEl.textContent = msg;
+            toast.classList.remove('opacity-0');
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+            }, 3000);
+        };
+
+        // Start
+        init();
+    </script>
+</body>
+</html>

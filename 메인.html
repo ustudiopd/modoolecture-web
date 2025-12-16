@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>모두의특강 - 세상을 바꾸는 아이디어</title>
+    
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons (CDN) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Custom Configuration for Tailwind -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Pretendard', 'sans-serif'],
+                    },
+                    colors: {
+                        slate: {
+                            950: '#020617', // Main Background
+                        }
+                    },
+                    animation: {
+                        'blob': 'blob 7s infinite',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Pretendard Font (Optional) */
+        @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
+        
+        body {
+            font-family: 'Pretendard', sans-serif;
+        }
+        
+        .blob-anim {
+            animation: blob 7s infinite;
+        }
+        .animation-delay-2000 {
+            animation-delay: 2s;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen selection:bg-purple-500 selection:text-white">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center gap-2 cursor-pointer">
+                    <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
+                        <i data-lucide="monitor-play" class="text-white w-5 h-5"></i>
+                    </div>
+                    <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
+                        모두의특강
+                    </span>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">강의 목록</a>
+                    <a href="#" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">커뮤니티</a>
+                    <a href="#" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">이벤트</a>
+                    <button class="p-2 text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="search" class="w-5 h-5"></i>
+                    </button>
+                    <button class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-slate-700">
+                        로그인
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-slate-300 p-2">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown (Hidden by default) -->
+        <div id="mobile-menu" class="hidden md:hidden bg-slate-900 border-b border-slate-800">
+            <div class="px-4 pt-2 pb-4 space-y-1">
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-slate-800">강의 목록</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-slate-800">커뮤니티</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-slate-800">이벤트</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-24 pb-20">
+        
+        <!-- 1. Hero Section (Featured Event) -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+            <div class="relative rounded-3xl overflow-hidden bg-gradient-to-br from-purple-900 to-blue-900 border border-slate-700 shadow-2xl shadow-purple-900/20 group cursor-pointer transition-transform hover:scale-[1.01]">
+                
+                <!-- Background Pattern -->
+                <div class="absolute inset-0 opacity-30 pointer-events-none">
+                   <div class="absolute -top-24 -right-24 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-50 blob-anim"></div>
+                   <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-50 blob-anim animation-delay-2000"></div>
+                </div>
+
+                <div class="relative z-10 p-8 md:p-16 flex flex-col md:flex-row items-start md:items-end justify-between gap-8">
+                    <div class="max-w-2xl">
+                        <!-- Tags -->
+                        <div class="flex gap-2 mb-4">
+                            <span class="px-3 py-1 bg-white/10 backdrop-blur-md text-white text-xs font-bold rounded-full border border-white/20">Live</span>
+                            <span class="px-3 py-1 bg-white/10 backdrop-blur-md text-white text-xs font-bold rounded-full border border-white/20">AI Trend</span>
+                            <span class="px-3 py-1 bg-white/10 backdrop-blur-md text-white text-xs font-bold rounded-full border border-white/20">Talk Show</span>
+                        </div>
+                        
+                        <!-- Title -->
+                        <h1 class="text-3xl md:text-5xl font-extrabold text-white mb-4 leading-tight">
+                            2025 AI 결산:<br>인간지능 x 인공지능 토크쇼
+                        </h1>
+                        <p class="text-slate-200 text-lg md:text-xl mb-8 font-light leading-relaxed">
+                            ChatGPT 5.1 & Gemini 3.0과 함께하는<br class="md:hidden"> 국내 최초 실험적 토크쇼
+                        </p>
+                        
+                        <!-- Buttons -->
+                        <div class="flex flex-wrap gap-4">
+                            <button class="flex items-center gap-2 bg-white text-purple-900 px-6 py-3 rounded-xl font-bold hover:bg-slate-100 transition-transform active:scale-95 shadow-lg">
+                                <i data-lucide="play" class="w-5 h-5 fill-current"></i>
+                                <span>라이브 입장하기</span>
+                            </button>
+                            <button class="flex items-center gap-2 bg-black/30 backdrop-blur-sm text-white px-6 py-3 rounded-xl font-medium border border-white/10 hover:bg-black/50 transition-colors">
+                                <i data-lucide="calendar" class="w-5 h-5"></i>
+                                <span>12월 17일 (수) 19:00</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- D-Day Counter -->
+                    <div class="hidden md:block">
+                        <div class="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl text-center min-w-[140px] shadow-xl">
+                            <p class="text-slate-300 text-sm mb-1 uppercase tracking-wider">Live까지</p>
+                            <p class="text-4xl font-bold text-white">D-2</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Platform Value Proposition -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Card 1 -->
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-800 hover:border-purple-500/30 transition-colors group">
+                    <div class="w-12 h-12 bg-purple-500/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-purple-500/20 transition-colors">
+                        <i data-lucide="users" class="text-purple-400 w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-100 mb-2">커뮤니티 중심 학습</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        혼자 듣는 강의가 아닙니다.<br>
+                        사전 질문과 투표로 함께 만들어갑니다.
+                    </p>
+                </div>
+                <!-- Card 2 -->
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-800 hover:border-blue-500/30 transition-colors group">
+                    <div class="w-12 h-12 bg-blue-500/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-blue-500/20 transition-colors">
+                        <i data-lucide="sparkles" class="text-blue-400 w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-100 mb-2">AI 기반 지식 관리</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        모든 강의 내용은 AI가 요약하고,<br>
+                        나만의 챗봇 데이터로 제공됩니다.
+                    </p>
+                </div>
+                <!-- Card 3 -->
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-800 hover:border-green-500/30 transition-colors group">
+                    <div class="w-12 h-12 bg-green-500/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-green-500/20 transition-colors">
+                        <i data-lucide="trending-up" class="text-green-400 w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-100 mb-2">실무 중심 인사이트</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        현업 전문가들의 생생한 경험과<br>
+                        최신 트렌드를 가장 빠르게 만납니다.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Recommended Lectures -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-2xl font-bold text-white">이번 달 인기 특강 🔥</h2>
+                <button class="text-slate-400 hover:text-white flex items-center gap-1 text-sm font-medium transition-colors">
+                    전체보기 <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Lecture 1 -->
+                <div class="group cursor-pointer">
+                    <div class="aspect-video rounded-xl bg-gradient-to-br from-emerald-900 to-slate-800 relative overflow-hidden mb-3 border border-slate-800 group-hover:border-slate-600 transition-all">
+                        <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
+                        <div class="absolute bottom-3 right-3 bg-black/60 text-white text-xs px-2 py-1 rounded backdrop-blur-sm flex items-center gap-1">
+                            <i data-lucide="play" class="w-3 h-3 fill-current"></i> 12:40
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-xs font-bold text-emerald-400">Development</span>
+                            <span class="w-1 h-1 bg-slate-600 rounded-full"></span>
+                            <span class="text-xs text-slate-500 flex items-center gap-1">
+                                <i data-lucide="user" class="w-3 h-3"></i> 1.2k
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-slate-200 group-hover:text-emerald-300 transition-colors leading-snug mb-1">
+                            노코드 툴로 만드는 나만의 SaaS
+                        </h3>
+                        <p class="text-sm text-slate-500">박지성 대표</p>
+                    </div>
+                </div>
+
+                <!-- Lecture 2 -->
+                <div class="group cursor-pointer">
+                    <div class="aspect-video rounded-xl bg-gradient-to-br from-orange-900 to-slate-800 relative overflow-hidden mb-3 border border-slate-800 group-hover:border-slate-600 transition-all">
+                        <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
+                        <div class="absolute bottom-3 right-3 bg-black/60 text-white text-xs px-2 py-1 rounded backdrop-blur-sm flex items-center gap-1">
+                            <i data-lucide="play" class="w-3 h-3 fill-current"></i> 45:10
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-xs font-bold text-orange-400">Business</span>
+                            <span class="w-1 h-1 bg-slate-600 rounded-full"></span>
+                            <span class="text-xs text-slate-500 flex items-center gap-1">
+                                <i data-lucide="user" class="w-3 h-3"></i> 890
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-slate-200 group-hover:text-orange-300 transition-colors leading-snug mb-1">
+                            스타트업, 첫 100명의 고객 찾기
+                        </h3>
+                        <p class="text-sm text-slate-500">최마케터</p>
+                    </div>
+                </div>
+
+                <!-- Lecture 3 -->
+                <div class="group cursor-pointer">
+                    <div class="aspect-video rounded-xl bg-gradient-to-br from-pink-900 to-slate-800 relative overflow-hidden mb-3 border border-slate-800 group-hover:border-slate-600 transition-all">
+                        <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
+                        <div class="absolute bottom-3 right-3 bg-black/60 text-white text-xs px-2 py-1 rounded backdrop-blur-sm flex items-center gap-1">
+                            <i data-lucide="play" class="w-3 h-3 fill-current"></i> 28:05
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-xs font-bold text-pink-400">Design</span>
+                            <span class="w-1 h-1 bg-slate-600 rounded-full"></span>
+                            <span class="text-xs text-slate-500 flex items-center gap-1">
+                                <i data-lucide="user" class="w-3 h-3"></i> 2.1k
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-slate-200 group-hover:text-pink-300 transition-colors leading-snug mb-1">
+                            UX라이팅: 사용자를 이끄는 한마디
+                        </h3>
+                        <p class="text-sm text-slate-500">김에디터</p>
+                    </div>
+                </div>
+
+                <!-- Lecture 4 -->
+                <div class="group cursor-pointer">
+                    <div class="aspect-video rounded-xl bg-gradient-to-br from-cyan-900 to-slate-800 relative overflow-hidden mb-3 border border-slate-800 group-hover:border-slate-600 transition-all">
+                        <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
+                        <div class="absolute bottom-3 right-3 bg-black/60 text-white text-xs px-2 py-1 rounded backdrop-blur-sm flex items-center gap-1">
+                            <i data-lucide="play" class="w-3 h-3 fill-current"></i> 15:30
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-xs font-bold text-cyan-400">Data</span>
+                            <span class="w-1 h-1 bg-slate-600 rounded-full"></span>
+                            <span class="text-xs text-slate-500 flex items-center gap-1">
+                                <i data-lucide="user" class="w-3 h-3"></i> 1.5k
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-slate-200 group-hover:text-cyan-300 transition-colors leading-snug mb-1">
+                            데이터 리터러시: 숫자로 일하는 법
+                        </h3>
+                        <p class="text-sm text-slate-500">이데이터</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Newsletter CTA -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-24">
+            <div class="bg-slate-900 rounded-3xl p-8 md:p-12 text-center border border-slate-800 relative overflow-hidden">
+                <!-- Top gradient line -->
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 via-blue-500 to-green-500"></div>
+                
+                <h2 class="text-2xl md:text-3xl font-bold text-white mb-4">
+                    매주 월요일, 세상을 바꾸는 아이디어를 받으세요
+                </h2>
+                <p class="text-slate-400 mb-8 max-w-xl mx-auto">
+                    모두의특강 뉴스레터를 구독하고 최신 IT 트렌드와 무료 강의 소식을 놓치지 마세요.
+                    (스팸은 절대 보내지 않습니다)
+                </p>
+                
+                <form class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" onsubmit="event.preventDefault(); alert('구독해주셔서 감사합니다!');">
+                    <input 
+                        type="email" 
+                        required
+                        placeholder="이메일 주소를 입력해주세요" 
+                        class="flex-1 bg-slate-950 border border-slate-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 placeholder-slate-600"
+                    >
+                    <button type="submit" class="bg-white text-slate-900 font-bold px-6 py-3 rounded-lg hover:bg-slate-200 transition-colors">
+                        구독하기
+                    </button>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-slate-950 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:text-left">
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-8 mb-8">
+                <div class="col-span-1 sm:col-span-2">
+                    <div class="flex items-center justify-center sm:justify-start gap-2 mb-4">
+                        <i data-lucide="monitor-play" class="text-purple-500 w-6 h-6"></i>
+                        <span class="text-xl font-bold text-white">모두의특강</span>
+                    </div>
+                    <p class="text-slate-500 text-sm max-w-xs mx-auto sm:mx-0">
+                        지식을 나누고 함께 성장하는<br>
+                        온라인 라이브 강연 플랫폼
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4">Menu</h4>
+                    <ul class="space-y-2 text-sm text-slate-500">
+                        <li><a href="#" class="hover:text-purple-400">강의 전체보기</a></li>
+                        <li><a href="#" class="hover:text-purple-400">커뮤니티</a></li>
+                        <li><a href="#" class="hover:text-purple-400">이벤트</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4">Contact</h4>
+                    <ul class="space-y-2 text-sm text-slate-500">
+                        <li>support@modoolecture.com</li>
+                        <li>제휴 및 출강 문의</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-slate-800 pt-8 text-xs text-slate-600">
+                &copy; 2025 Modoo Lecture. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Initialize Lucide Icons & Mobile Menu Script -->
+    <script>
+        // Icons
+        lucide.createIcons();
+
+        // Mobile Menu Toggle
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>

@@ -55,8 +55,12 @@ export default function QuestionModal({ question, isOpen, onClose, questions = [
   // 텍스트 크기 조절
   const [isLargeFont, setIsLargeFont] = useState(false);
   
-  // 답변 블라인드 상태 (기본값: 블라인드)
-  const [isBlind, setIsBlind] = useState(true);
+  // 답변 블라인드 상태 (localStorage에서 읽어오기, 기본값: 블라인드)
+  const [isBlind, setIsBlind] = useState(() => {
+    if (typeof window === 'undefined') return true;
+    const saved = localStorage.getItem('answer_blind_mode');
+    return saved !== null ? saved === 'true' : true;
+  });
   
   // 현재 질문 인덱스
   const currentIndex = question ? questions.findIndex(q => q.id === question.id) : -1;
@@ -90,9 +94,15 @@ export default function QuestionModal({ question, isOpen, onClose, questions = [
   // 모달이 열릴 때 답변 표시 상태 초기화 및 콘텐츠 파싱
   useEffect(() => {
     if (isOpen && question) {
-      setShowAnswers(false);
       setFullscreenAnswer(null);
-      setIsBlind(true); // 모달이 열릴 때 블라인드 상태로 초기화
+      // localStorage에서 블라인드 상태 읽어오기
+      const savedBlindMode = typeof window !== 'undefined' 
+        ? localStorage.getItem('answer_blind_mode') 
+        : null;
+      const shouldBlind = savedBlindMode !== null ? savedBlindMode === 'true' : true;
+      setIsBlind(shouldBlind);
+      setShowAnswers(!shouldBlind); // 블라인드가 꺼져있으면 답변 표시
+      
       // 모달이 열릴 때 콘텐츠 강제 업데이트
       setQuestionContent(parseContent(question.content));
       setAnswerContent(parseContent(question.answer));
@@ -174,17 +184,20 @@ export default function QuestionModal({ question, isOpen, onClose, questions = [
       setGptContent(null);
       setShowAnswers(false);
       setFullscreenAnswer(null);
-      setIsBlind(true);
       setGeminiLikeCount(0);
       setGptLikeCount(0);
       setLikedAnswers(new Set());
       return;
     }
 
-    // 상태 초기화
-    setShowAnswers(false);
+    // 상태 초기화 (블라인드 상태는 localStorage 값 유지)
+    const savedBlindMode = typeof window !== 'undefined' 
+      ? localStorage.getItem('answer_blind_mode') 
+      : null;
+    const shouldBlind = savedBlindMode !== null ? savedBlindMode === 'true' : true;
+    setIsBlind(shouldBlind);
+    setShowAnswers(!shouldBlind);
     setFullscreenAnswer(null);
-    setIsBlind(true);
     setGeminiLikeCount(question.gemini_like_count || 0);
     setGptLikeCount(question.gpt_like_count || 0);
     
@@ -391,13 +404,18 @@ export default function QuestionModal({ question, isOpen, onClose, questions = [
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      setIsBlind(!isBlind);
-                      if (isBlind) {
-                        // 블라인드를 끄면 바로 답변 보기
-                        setShowAnswers(true);
-                      } else {
+                      const newBlindState = !isBlind;
+                      setIsBlind(newBlindState);
+                      // localStorage에 저장
+                      if (typeof window !== 'undefined') {
+                        localStorage.setItem('answer_blind_mode', String(newBlindState));
+                      }
+                      if (newBlindState) {
                         // 블라인드를 켜면 답변 숨기기
                         setShowAnswers(false);
+                      } else {
+                        // 블라인드를 끄면 바로 답변 보기
+                        setShowAnswers(true);
                       }
                     }}
                     className="p-2 hover:bg-slate-800 rounded-lg transition-colors text-slate-400 hover:text-white"
@@ -599,6 +617,10 @@ export default function QuestionModal({ question, isOpen, onClose, questions = [
                 onClick={(e) => {
                   e.stopPropagation();
                   setIsBlind(false);
+                  // localStorage에 저장
+                  if (typeof window !== 'undefined') {
+                    localStorage.setItem('answer_blind_mode', 'false');
+                  }
                   setShowAnswers(true);
                 }}
                 className="relative z-10 px-6 md:px-8 py-3 md:py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-bold text-base md:text-lg transition-colors shadow-lg shadow-purple-900/50"

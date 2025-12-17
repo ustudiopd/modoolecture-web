@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { X, CheckCircle2, ThumbsUp, MessageCircle, Sparkles, Bot, ChevronLeft, ChevronRight, Maximize2, Minimize2, Type } from 'lucide-react';
+import { X, CheckCircle2, ThumbsUp, MessageCircle, Sparkles, Bot, ChevronLeft, ChevronRight, Maximize2, Minimize2, Type, Eye, EyeOff } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
 import ReadOnlyEditor from '@/components/editor/ReadOnlyEditor';
 import type { JSONContent } from 'novel';
@@ -55,6 +55,9 @@ export default function QuestionModal({ question, isOpen, onClose, questions = [
   // 텍스트 크기 조절
   const [isLargeFont, setIsLargeFont] = useState(false);
   
+  // 답변 블라인드 상태 (기본값: 블라인드)
+  const [isBlind, setIsBlind] = useState(true);
+  
   // 현재 질문 인덱스
   const currentIndex = question ? questions.findIndex(q => q.id === question.id) : -1;
   const hasPrev = currentIndex > 0;
@@ -89,6 +92,7 @@ export default function QuestionModal({ question, isOpen, onClose, questions = [
     if (isOpen && question) {
       setShowAnswers(false);
       setFullscreenAnswer(null);
+      setIsBlind(true); // 모달이 열릴 때 블라인드 상태로 초기화
       // 모달이 열릴 때 콘텐츠 강제 업데이트
       setQuestionContent(parseContent(question.content));
       setAnswerContent(parseContent(question.answer));
@@ -170,6 +174,7 @@ export default function QuestionModal({ question, isOpen, onClose, questions = [
       setGptContent(null);
       setShowAnswers(false);
       setFullscreenAnswer(null);
+      setIsBlind(true);
       setGeminiLikeCount(0);
       setGptLikeCount(0);
       setLikedAnswers(new Set());
@@ -179,6 +184,7 @@ export default function QuestionModal({ question, isOpen, onClose, questions = [
     // 상태 초기화
     setShowAnswers(false);
     setFullscreenAnswer(null);
+    setIsBlind(true);
     setGeminiLikeCount(question.gemini_like_count || 0);
     setGptLikeCount(question.gpt_like_count || 0);
     
@@ -380,6 +386,26 @@ export default function QuestionModal({ question, isOpen, onClose, questions = [
                 >
                   <Type className="w-4 h-4" />
                 </button>
+                {/* 답변 블라인드 토글 버튼 */}
+                {hasAnswers && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsBlind(!isBlind);
+                      if (isBlind) {
+                        // 블라인드를 끄면 바로 답변 보기
+                        setShowAnswers(true);
+                      } else {
+                        // 블라인드를 켜면 답변 숨기기
+                        setShowAnswers(false);
+                      }
+                    }}
+                    className="p-2 hover:bg-slate-800 rounded-lg transition-colors text-slate-400 hover:text-white"
+                    title={isBlind ? '답변 보기' : '답변 가리기'}
+                  >
+                    {isBlind ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                )}
                 <button
                   onClick={onClose}
                   className="flex-shrink-0 p-2 hover:bg-slate-800 rounded-lg transition-colors text-slate-400 hover:text-white"
@@ -414,7 +440,7 @@ export default function QuestionModal({ question, isOpen, onClose, questions = [
           </div>
 
           {/* Answers Section - 모바일: 세로 배치, 데스크톱: Split View for 16:9 */}
-          {hasAnswers && !showAnswers && (
+          {hasAnswers && (!showAnswers || isBlind) && (
             <div className="flex-1 relative flex items-center justify-center min-h-[200px] md:min-h-0">
               {/* 블러 처리된 답변 배경 - 모바일에서 숨김 */}
               <div className="hidden md:grid absolute inset-0 grid-cols-2 gap-4 min-h-0 opacity-30 blur-sm pointer-events-none">
@@ -572,6 +598,7 @@ export default function QuestionModal({ question, isOpen, onClose, questions = [
               <button
                 onClick={(e) => {
                   e.stopPropagation();
+                  setIsBlind(false);
                   setShowAnswers(true);
                 }}
                 className="relative z-10 px-6 md:px-8 py-3 md:py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-bold text-base md:text-lg transition-colors shadow-lg shadow-purple-900/50"
@@ -581,7 +608,7 @@ export default function QuestionModal({ question, isOpen, onClose, questions = [
             </div>
           )}
 
-          {hasAnswers && showAnswers && !fullscreenAnswer && (
+          {hasAnswers && showAnswers && !isBlind && !fullscreenAnswer && (
             <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 min-h-0 overflow-y-auto">
               {/* Expert Answer */}
               {question.answer && (

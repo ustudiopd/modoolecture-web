@@ -6,6 +6,11 @@
 - **담당자**: AI Assistant
 - **상태**: ✅ 완료
 
+## 배포 환경 정보
+- **현재 메인 프로젝트**: `modoolecture-web-e1mh` (Vercel)
+- **백업 프로젝트**: `modoolecture-web` (Vercel)
+- **계획**: `modoolecture-web-e1mh`로 안정화 후 통합 예정
+
 ## 2. 다음 예정 작업  
 - 배포 환경 목록 미표시 문제 해결 (환경 변수 확인 및 수정)
 - 질문 답변 자동 생성 기능 (Gemini/GPT API 연동)

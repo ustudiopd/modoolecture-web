@@ -446,6 +446,7 @@ export default function QuestionModal({ question, isOpen, onClose, questions = [
                       <div className="min-w-0">
                         <h3 className="font-bold text-lg text-blue-200 truncate">Gemini</h3>
                         <p className="text-xs text-slate-400">Google DeepMind</p>
+                        <p className="text-xs text-slate-500 mt-0.5">gemini 3.0 pro</p>
                       </div>
                     </div>
                     <div className="flex-1 overflow-y-auto pr-2 min-h-0">
@@ -467,6 +468,7 @@ export default function QuestionModal({ question, isOpen, onClose, questions = [
                       <div className="min-w-0">
                         <h3 className="font-bold text-lg text-emerald-200 truncate">ChatGPT</h3>
                         <p className="text-xs text-slate-400">OpenAI</p>
+                        <p className="text-xs text-slate-500 mt-0.5">gpt-5.2-thinking</p>
                       </div>
                     </div>
                     <div className="flex-1 overflow-y-auto pr-2 min-h-0">
@@ -494,6 +496,7 @@ export default function QuestionModal({ question, isOpen, onClose, questions = [
                             <div>
                               <h3 className="font-bold text-lg text-blue-200">Gemini</h3>
                               <p className="text-xs text-slate-400">Google DeepMind</p>
+                              <p className="text-xs text-slate-500 mt-0.5">gemini 3.0 pro</p>
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
@@ -537,6 +540,7 @@ export default function QuestionModal({ question, isOpen, onClose, questions = [
                             <div>
                               <h3 className="font-bold text-lg text-emerald-200">ChatGPT</h3>
                               <p className="text-xs text-slate-400">OpenAI</p>
+                              <p className="text-xs text-slate-500 mt-0.5">gpt-5.2-thinking</p>
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
@@ -627,6 +631,7 @@ export default function QuestionModal({ question, isOpen, onClose, questions = [
                       <div className="min-w-0">
                         <h3 className="font-bold text-lg text-blue-200 truncate">Gemini</h3>
                         <p className="text-xs text-slate-400">Google DeepMind</p>
+                        <p className="text-xs text-slate-500 mt-0.5">gemini 3.0 pro</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -675,6 +680,7 @@ export default function QuestionModal({ question, isOpen, onClose, questions = [
                       <div className="min-w-0">
                         <h3 className="font-bold text-lg text-emerald-200 truncate">ChatGPT</h3>
                         <p className="text-xs text-slate-400">OpenAI</p>
+                        <p className="text-xs text-slate-500 mt-0.5">gpt-5.2-thinking</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -722,6 +728,7 @@ export default function QuestionModal({ question, isOpen, onClose, questions = [
                           <div>
                             <h3 className="font-bold text-lg text-blue-200">Gemini</h3>
                             <p className="text-xs text-slate-400">Google DeepMind</p>
+                            <p className="text-xs text-slate-500 mt-0.5">gemini 3.0 pro</p>
                           </div>
                         </div>
                         <Maximize2 className="w-4 h-4 text-slate-500" />
@@ -747,6 +754,7 @@ export default function QuestionModal({ question, isOpen, onClose, questions = [
                           <div>
                             <h3 className="font-bold text-lg text-emerald-200">ChatGPT</h3>
                             <p className="text-xs text-slate-400">OpenAI</p>
+                            <p className="text-xs text-slate-500 mt-0.5">gpt-5.2-thinking</p>
                           </div>
                         </div>
                         <Maximize2 className="w-4 h-4 text-slate-500" />
@@ -785,6 +793,7 @@ export default function QuestionModal({ question, isOpen, onClose, questions = [
                       <div>
                         <h3 className="font-bold text-2xl text-blue-200">Gemini</h3>
                         <p className="text-sm text-slate-400">Google DeepMind</p>
+                        <p className="text-xs text-slate-500 mt-0.5">gemini 3.0 pro</p>
                       </div>
                     </>
                   )}
@@ -796,6 +805,7 @@ export default function QuestionModal({ question, isOpen, onClose, questions = [
                       <div>
                         <h3 className="font-bold text-2xl text-emerald-200">ChatGPT</h3>
                         <p className="text-sm text-slate-400">OpenAI</p>
+                        <p className="text-xs text-slate-500 mt-0.5">gpt-5.2-thinking</p>
                       </div>
                     </>
                   )}

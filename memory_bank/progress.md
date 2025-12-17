@@ -2,6 +2,13 @@
 
 ## [2025-01-17]
 - **질문 리스트 태그 표시 개선**: 17개 분류 태그 시스템 구현
+- **모델명 표시 추가**: Gemini/GPT 답변 카드에 모델명 표시
+  - Gemini: "gemini 3.0 pro" 추가
+  - ChatGPT: "gpt-5.2-thinking" 추가
+  - 모든 답변 카드 위치에 적용 (블러 배경, 답변보기, 전체화면 모드)
+- **모바일 UI 최적화**: "Copy for LLM" 버튼 모바일에서 아이콘만 표시
+  - 모바일: 아이콘만 표시 (`hidden md:inline`)
+  - 데스크톱: 아이콘 + 텍스트 표시
   - 질문 카드에 `primary_topic`, `secondary_topics`, `intent` 태그 표시 (한글 변환)
   - 검색창 아래 9개 Topic 태그 필터 (none 제외)
   - `lib/types/question-tags.ts`에 `getTagLabel()` 함수 추가

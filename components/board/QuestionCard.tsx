@@ -104,7 +104,7 @@ export default function QuestionCard({ question, onLike, liked = false, onClick,
         <button
           onClick={handleCopy}
           className={cn(
-            'flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium transition-colors border',
+            'flex items-center gap-1.5 px-2 md:px-3 py-1.5 rounded text-xs font-medium transition-colors border',
             copied
               ? 'bg-green-600 text-white border-green-500'
               : 'bg-slate-800 hover:bg-purple-600 text-slate-300 hover:text-white border-slate-700 hover:border-purple-500'
@@ -112,7 +112,7 @@ export default function QuestionCard({ question, onLike, liked = false, onClick,
           title="LLM용 프롬프트 복사"
         >
           {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-          {copied ? '복사됨' : 'Copy for LLM'}
+          <span className="hidden md:inline">{copied ? '복사됨' : 'Copy for LLM'}</span>
         </button>
       </div>
 

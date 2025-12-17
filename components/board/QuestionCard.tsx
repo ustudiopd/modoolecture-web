@@ -93,6 +93,15 @@ export default function QuestionCard({ question, onLike, liked = false, onClick 
           {question.title}
         </h3>
         <p className="text-slate-200 text-sm mb-4 leading-relaxed line-clamp-3">{question.content}</p>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onClick?.();
+          }}
+          className="text-purple-400 hover:text-purple-300 text-sm font-medium mt-2 transition-colors"
+        >
+          자세히 보기 →
+        </button>
       </div>
 
       {question.answer && (

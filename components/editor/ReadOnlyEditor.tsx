@@ -6,6 +6,7 @@ import {
   EditorContent,
   type JSONContent 
 } from 'novel';
+import { extensions } from './extensions';
 import { cn } from '@/lib/utils/cn';
 
 interface ReadOnlyEditorProps {
@@ -76,6 +77,7 @@ export default function ReadOnlyEditor({ content, className }: ReadOnlyEditorPro
     <div className={cn("w-full", className)}>
       <EditorRoot>
         <EditorContent
+          extensions={extensions as any}
           initialContent={jsonContent ?? undefined}
           editable={false}
           editorProps={{

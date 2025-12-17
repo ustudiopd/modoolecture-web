@@ -7,10 +7,10 @@ import { supabase } from '@/lib/supabase/client';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { slug } = params;
+    const { slug } = await params;
 
     const { data, error } = await supabase
       .from('modu_events')

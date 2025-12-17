@@ -7,11 +7,10 @@ import { supabaseAdmin } from '@/lib/supabase/admin';
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> | { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const resolvedParams = await Promise.resolve(params);
-    const { id } = resolvedParams;
+    const { id } = await params;
     const body = await request.json();
     const { answer_gemini, answer_gpt } = body;
 

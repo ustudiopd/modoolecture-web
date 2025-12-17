@@ -445,7 +445,6 @@ export default function QuestionModal({ question, isOpen, onClose, questions = [
                       </div>
                       <div className="min-w-0">
                         <h3 className="font-bold text-lg text-blue-200 truncate">Gemini</h3>
-                        <p className="text-xs text-slate-400">Google DeepMind</p>
                         <p className="text-xs text-slate-500 mt-0.5">gemini 3.0 pro</p>
                       </div>
                     </div>
@@ -467,7 +466,6 @@ export default function QuestionModal({ question, isOpen, onClose, questions = [
                       </div>
                       <div className="min-w-0">
                         <h3 className="font-bold text-lg text-emerald-200 truncate">ChatGPT</h3>
-                        <p className="text-xs text-slate-400">OpenAI</p>
                         <p className="text-xs text-slate-500 mt-0.5">gpt-5.2-thinking</p>
                       </div>
                     </div>
@@ -495,7 +493,6 @@ export default function QuestionModal({ question, isOpen, onClose, questions = [
                             </div>
                             <div>
                               <h3 className="font-bold text-lg text-blue-200">Gemini</h3>
-                              <p className="text-xs text-slate-400">Google DeepMind</p>
                               <p className="text-xs text-slate-500 mt-0.5">gemini 3.0 pro</p>
                             </div>
                           </div>
@@ -539,7 +536,6 @@ export default function QuestionModal({ question, isOpen, onClose, questions = [
                             </div>
                             <div>
                               <h3 className="font-bold text-lg text-emerald-200">ChatGPT</h3>
-                              <p className="text-xs text-slate-400">OpenAI</p>
                               <p className="text-xs text-slate-500 mt-0.5">gpt-5.2-thinking</p>
                             </div>
                           </div>
@@ -630,7 +626,6 @@ export default function QuestionModal({ question, isOpen, onClose, questions = [
                       </div>
                       <div className="min-w-0">
                         <h3 className="font-bold text-lg text-blue-200 truncate">Gemini</h3>
-                        <p className="text-xs text-slate-400">Google DeepMind</p>
                         <p className="text-xs text-slate-500 mt-0.5">gemini 3.0 pro</p>
                       </div>
                     </div>
@@ -679,7 +674,6 @@ export default function QuestionModal({ question, isOpen, onClose, questions = [
                       </div>
                       <div className="min-w-0">
                         <h3 className="font-bold text-lg text-emerald-200 truncate">ChatGPT</h3>
-                        <p className="text-xs text-slate-400">OpenAI</p>
                         <p className="text-xs text-slate-500 mt-0.5">gpt-5.2-thinking</p>
                       </div>
                     </div>
@@ -727,7 +721,6 @@ export default function QuestionModal({ question, isOpen, onClose, questions = [
                           </div>
                           <div>
                             <h3 className="font-bold text-lg text-blue-200">Gemini</h3>
-                            <p className="text-xs text-slate-400">Google DeepMind</p>
                             <p className="text-xs text-slate-500 mt-0.5">gemini 3.0 pro</p>
                           </div>
                         </div>
@@ -753,7 +746,6 @@ export default function QuestionModal({ question, isOpen, onClose, questions = [
                           </div>
                           <div>
                             <h3 className="font-bold text-lg text-emerald-200">ChatGPT</h3>
-                            <p className="text-xs text-slate-400">OpenAI</p>
                             <p className="text-xs text-slate-500 mt-0.5">gpt-5.2-thinking</p>
                           </div>
                         </div>
@@ -792,7 +784,6 @@ export default function QuestionModal({ question, isOpen, onClose, questions = [
                       </div>
                       <div>
                         <h3 className="font-bold text-2xl text-blue-200">Gemini</h3>
-                        <p className="text-sm text-slate-400">Google DeepMind</p>
                         <p className="text-xs text-slate-500 mt-0.5">gemini 3.0 pro</p>
                       </div>
                     </>
@@ -804,7 +795,6 @@ export default function QuestionModal({ question, isOpen, onClose, questions = [
                       </div>
                       <div>
                         <h3 className="font-bold text-2xl text-emerald-200">ChatGPT</h3>
-                        <p className="text-sm text-slate-400">OpenAI</p>
                         <p className="text-xs text-slate-500 mt-0.5">gpt-5.2-thinking</p>
                       </div>
                     </>

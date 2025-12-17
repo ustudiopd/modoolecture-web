@@ -50,11 +50,22 @@ div.critical-container-4xl {
 @tailwind components;
 @tailwind utilities;
 
+/* 강제 다크 테마 */
+html {
+  color-scheme: dark;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
 body {
   font-family: 'Pretendard', sans-serif;
   width: 100%;
   margin: 0;
   padding: 0;
+  background-color: #020617; /* slate-950 */
+  color: #e2e8f0; /* slate-200 */
 }
 
 .blob-anim {

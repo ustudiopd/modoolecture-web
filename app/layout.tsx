@@ -12,8 +12,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="ko" className="dark">
-      <body className="bg-slate-950 text-slate-200 min-h-screen selection:bg-purple-500 selection:text-white">
+    <html lang="ko" className="dark" suppressHydrationWarning>
+      <body className="dark bg-slate-950 text-slate-200 min-h-screen selection:bg-purple-500 selection:text-white">
         {children}
       </body>
     </html>

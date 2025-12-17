@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Copy, CheckCircle2, ThumbsUp, MessageCircle, Check } from 'lucide-react';
 import { generatePromptMarkdown, copyToClipboard } from '@/lib/utils/markdown';
 import { cn } from '@/lib/utils/cn';
+import { splitCompoundTag, getTagLabel } from '@/lib/types/question-tags';
 
 interface Question {
   id: string;
@@ -11,6 +12,9 @@ interface Question {
   content: string;
   answer: string | null;
   category?: string;
+  primary_topic?: string | null;
+  secondary_topics?: string[] | null;
+  intent?: string | null;
   like_count: number;
   comments?: number;
   created_at: string;
@@ -25,9 +29,10 @@ interface QuestionCardProps {
   onLike: (id: string) => Promise<void>;
   liked?: boolean;
   onClick?: () => void;
+  index?: number;
 }
 
-export default function QuestionCard({ question, onLike, liked = false, onClick }: QuestionCardProps) {
+export default function QuestionCard({ question, onLike, liked = false, onClick, index }: QuestionCardProps) {
   const [copied, setCopied] = useState(false);
   const [isLiking, setIsLiking] = useState(false);
 
@@ -61,8 +66,31 @@ export default function QuestionCard({ question, onLike, liked = false, onClick 
       onClick={onClick}
     >
       <div className="flex justify-between items-start mb-3">
-        <div className="flex items-center gap-2">
-          {question.category && (
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Primary Topic */}
+          {question.primary_topic && question.primary_topic !== 'none' && (
+            <span className="px-2 py-0.5 bg-blue-900/30 text-blue-400 text-xs rounded border border-blue-500/30 font-medium">
+              {getTagLabel(question.primary_topic)}
+            </span>
+          )}
+          {/* Secondary Topics */}
+          {question.secondary_topics && question.secondary_topics.length > 0 && 
+            question.secondary_topics
+              .filter(topic => topic !== 'none' && topic !== question.primary_topic)
+              .map((topic, idx) => (
+                <span key={`secondary-${topic}-${idx}`} className="px-2 py-0.5 bg-slate-800 text-slate-300 text-xs rounded border border-slate-700">
+                  {getTagLabel(topic)}
+                </span>
+              ))
+          }
+          {/* Intent */}
+          {question.intent && question.intent !== 'other' && (
+            <span className="px-2 py-0.5 bg-purple-900/30 text-purple-400 text-xs rounded border border-purple-500/30 font-medium">
+              {getTagLabel(question.intent)}
+            </span>
+          )}
+          {/* Legacy category (호환성) */}
+          {!question.primary_topic && question.category && (
             <span className="px-2 py-0.5 bg-slate-800 text-slate-400 text-xs rounded border border-slate-700 font-mono">
               #{question.category}
             </span>
@@ -89,6 +117,9 @@ export default function QuestionCard({ question, onLike, liked = false, onClick 
       </div>
 
       <h3 className="text-lg font-bold text-white mb-2 leading-snug group-hover:text-purple-300 transition-colors cursor-pointer">
+        {index !== undefined && (
+          <span className="text-purple-400 font-mono mr-2">#{index + 1}</span>
+        )}
         {question.title}
       </h3>
       <p className="text-slate-400 text-sm mb-4 leading-relaxed line-clamp-3">{question.content}</p>

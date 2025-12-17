@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -10,60 +12,69 @@ export default function HomePage() {
       <main className="pt-24 pb-20">
         {/* 1. Hero Section (Featured Event) */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
-          <Link href="/board/ai-2025">
-            <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-purple-900 to-blue-900 border border-slate-700 shadow-2xl shadow-purple-900/20 group cursor-pointer transition-transform hover:scale-[1.01]">
-              {/* Background Pattern */}
-              <div className="absolute inset-0 opacity-30 pointer-events-none">
-                <div className="absolute -top-24 -right-24 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-50 blob-anim"></div>
-                <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-50 blob-anim animation-delay-2000"></div>
-              </div>
+          <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-purple-900 to-blue-900 border border-slate-700 shadow-2xl shadow-purple-900/20 group transition-transform hover:scale-[1.01]">
+            {/* Background Pattern */}
+            <div className="absolute inset-0 opacity-30 pointer-events-none">
+              <div className="absolute -top-24 -right-24 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-50 blob-anim"></div>
+              <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-50 blob-anim animation-delay-2000"></div>
+            </div>
 
-              <div className="relative z-10 p-8 md:p-16 flex flex-col md:flex-row items-start md:items-end justify-between gap-8">
-                <div className="max-w-2xl">
-                  {/* Tags */}
-                  <div className="flex gap-2 mb-4">
-                    <span className="px-3 py-1 bg-white/10 backdrop-blur-md text-white text-xs font-bold rounded-full border border-white/20">
-                      Live
-                    </span>
-                    <span className="px-3 py-1 bg-white/10 backdrop-blur-md text-white text-xs font-bold rounded-full border border-white/20">
-                      AI Trend
-                    </span>
-                    <span className="px-3 py-1 bg-white/10 backdrop-blur-md text-white text-xs font-bold rounded-full border border-white/20">
-                      Talk Show
-                    </span>
-                  </div>
-
-                  {/* Title */}
-                  <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-4 leading-tight">
-                    2025 AI 결산:<br />인간지능 x 인공지능 토크쇼
-                  </h1>
-                  <p className="text-slate-200 text-lg md:text-xl mb-8 font-light leading-relaxed">
-                    ChatGPT 5.1 & Gemini 3.0과 함께하는<br className="md:hidden" /> 국내 최초 실험적 토크쇼
-                  </p>
-
-                  {/* Buttons */}
-                  <div className="flex flex-wrap gap-4">
-                    <button className="flex items-center gap-2 bg-white text-purple-900 px-6 py-3 rounded-xl font-bold hover:bg-slate-100 transition-transform active:scale-95 shadow-lg">
-                      <Play className="w-5 h-5 fill-current" />
-                      <span>라이브 입장하기</span>
-                    </button>
-                    <button className="flex items-center gap-2 bg-black/30 backdrop-blur-sm text-white px-6 py-3 rounded-xl font-medium border border-white/10 hover:bg-black/50 transition-colors">
-                      <Calendar className="w-5 h-5" />
-                      <span>12월 17일 (수) 19:00</span>
-                    </button>
-                  </div>
+            <div className="relative z-10 p-8 md:p-16 flex flex-col md:flex-row items-start md:items-end justify-between gap-8">
+              <div className="max-w-2xl">
+                {/* Tags */}
+                <div className="flex gap-2 mb-4">
+                  <span className="px-3 py-1 bg-white/10 backdrop-blur-md text-white text-xs font-bold rounded-full border border-white/20">
+                    Live
+                  </span>
+                  <span className="px-3 py-1 bg-white/10 backdrop-blur-md text-white text-xs font-bold rounded-full border border-white/20">
+                    AI Trend
+                  </span>
+                  <span className="px-3 py-1 bg-white/10 backdrop-blur-md text-white text-xs font-bold rounded-full border border-white/20">
+                    Talk Show
+                  </span>
                 </div>
 
-                {/* D-Day Counter */}
-                <div className="hidden md:block">
-                  <div className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl text-center min-w-[140px] shadow-xl">
-                    <p className="text-slate-300 text-sm mb-1 uppercase tracking-wider">Live까지</p>
-                    <p className="text-4xl font-bold text-white">D-2</p>
-                  </div>
+                {/* Title */}
+                <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-4 leading-tight">
+                  2025 AI 결산:<br />인간지능 x 인공지능 토크쇼
+                </h1>
+                <p className="text-slate-200 text-lg md:text-xl mb-8 font-light leading-relaxed">
+                  ChatGPT 5.1 & Gemini 3.0과 함께하는<br className="md:hidden" /> 국내 최초 실험적 토크쇼
+                </p>
+
+                {/* Buttons */}
+                <div className="flex flex-wrap gap-4">
+                  <a
+                    href="https://must.ai.kr/webinar/7d4ad9e9-2f69-49db-87a9-8d25cb82edee"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 bg-white text-purple-900 px-6 py-3 rounded-xl font-bold hover:bg-slate-100 transition-transform active:scale-95 shadow-lg"
+                  >
+                    <Play className="w-5 h-5 fill-current" />
+                    <span>라이브 입장하기</span>
+                  </a>
+                  <Link
+                    href="/board/ai-2025"
+                    className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl font-bold transition-colors shadow-lg shadow-purple-900/30"
+                  >
+                    <span>질문보기</span>
+                  </Link>
+                  <button className="flex items-center gap-2 bg-black/30 backdrop-blur-sm text-white px-6 py-3 rounded-xl font-medium border border-white/10 hover:bg-black/50 transition-colors">
+                    <Calendar className="w-5 h-5" />
+                    <span>12월 17일 (수) 19:00</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* D-Day Counter */}
+              <div className="hidden md:block">
+                <div className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl text-center min-w-[140px] shadow-xl">
+                  <p className="text-slate-300 text-sm mb-1 uppercase tracking-wider">Live까지</p>
+                  <p className="text-4xl font-bold text-white">D-2</p>
                 </div>
               </div>
             </div>
-          </Link>
+          </div>
         </section>
 
         {/* 2. Platform Value Proposition */}

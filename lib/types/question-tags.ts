@@ -60,6 +60,33 @@ export const VALID_INTENT_TAGS: QuestionIntentTag[] = [
 ];
 
 /**
+ * 태그를 한글 라벨로 변환
+ */
+export function getTagLabel(tag: string): string {
+  const tagLabelMap: Record<string, string> = {
+    // Topic Tags
+    "none": "없음",
+    "getting_started": "시작/입문",
+    "workflow_automation": "워크플로/자동화",
+    "prompting": "프롬프트",
+    "tools_models": "툴/모델",
+    "accuracy_verification": "정확도/검증",
+    "security_privacy": "보안/개인정보",
+    "copyright_ethics": "저작권/윤리",
+    "cost_roi": "비용/ROI",
+    "trends_learning_career": "트랜드/러닝/커리어",
+    // Intent Tags
+    "howto": "방법/가이드",
+    "recommend": "추천/비교",
+    "troubleshoot": "문제/해결",
+    "explain": "설명/이해",
+    "strategy": "전략/전망",
+    "other": "기타",
+  };
+  return tagLabelMap[tag] || tag;
+}
+
+/**
  * 복합 태그를 개별 태그로 분리
  * 예: trends_learning_career → ["트랜드", "러닝", "커리어"]
  */

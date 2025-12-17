@@ -10,8 +10,10 @@ import QuestionModal from '@/components/board/QuestionModal';
 import CategoryFilter from '@/components/board/CategoryFilter';
 import { ArrowLeft, Search, MessageCircle, ExternalLink, Plus, SearchX } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
+import { VALID_TOPIC_TAGS } from '@/lib/types/question-tags';
 
-const categories = ['All', 'Tech/Dev', 'Business', 'Career', 'Ethics', 'Prompt'];
+// 9개 Topic 태그 (none 제외)
+const topicCategories = VALID_TOPIC_TAGS.filter(tag => tag !== 'none');
 
 export default function BoardPage() {
   const params = useParams();
@@ -19,7 +21,7 @@ export default function BoardPage() {
   const eventSlug = params.event as string;
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [sortBy, setSortBy] = useState<'hot' | 'new' | 'answered'>('hot');
   const [questions, setQuestions] = useState<any[]>([]);
   const [event, setEvent] = useState<any>(null);
@@ -57,7 +59,7 @@ export default function BoardPage() {
         // Load questions
         const { data: questionsData, error: questionsError } = await supabase
           .from('modu_questions')
-          .select('*')
+          .select('*, gemini_like_count, gpt_like_count, primary_topic, secondary_topics, intent')
           .eq('event_id', eventData.id)
           .eq('is_hidden', false)
           .order('like_count', { ascending: false });
@@ -101,7 +103,10 @@ export default function BoardPage() {
   const filteredQuestions = questions
     .filter((q) => {
       const matchSearch = (q.title + q.content).toLowerCase().includes(searchTerm.toLowerCase());
-      const matchCat = selectedCategory === 'All' || q.category === selectedCategory;
+      const matchCat = selectedCategory === 'All' || 
+        q.primary_topic === selectedCategory || 
+        (q.secondary_topics && q.secondary_topics.includes(selectedCategory)) ||
+        (!q.primary_topic && q.category === selectedCategory); // 호환성
       return matchSearch && matchCat;
     })
     .sort((a, b) => {
@@ -114,6 +119,15 @@ export default function BoardPage() {
       }
       return 0;
     });
+
+  // 최신등록순 기준으로 번호 매기기 (created_at 기준 내림차순)
+  const questionsByNewest = [...questions].sort((a, b) => 
+    new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  );
+  const questionNumberMap = new Map<string, number>();
+  questionsByNewest.forEach((q, index) => {
+    questionNumberMap.set(q.id, index + 1);
+  });
 
   // Handle like
   const handleLike = useCallback(
@@ -287,9 +301,9 @@ export default function BoardPage() {
               </div>
             </div>
 
-            {/* Categories */}
+            {/* Categories - 9개 Topic 태그 */}
             <CategoryFilter
-              categories={categories}
+              categories={['All', ...topicCategories]}
               selectedCategory={selectedCategory}
               onSelectCategory={setSelectedCategory}
             />
@@ -315,6 +329,7 @@ export default function BoardPage() {
                     setSelectedQuestion(question);
                     setIsModalOpen(true);
                   }}
+                  index={questionNumberMap.get(question.id) ? questionNumberMap.get(question.id)! - 1 : undefined}
                 />
               ))}
             </div>
@@ -339,6 +354,16 @@ export default function BoardPage() {
         onClose={() => {
           setIsModalOpen(false);
           setSelectedQuestion(null);
+        }}
+        questions={filteredQuestions}
+        onNavigateQuestion={(direction) => {
+          if (!selectedQuestion) return;
+          const currentIndex = filteredQuestions.findIndex(q => q.id === selectedQuestion.id);
+          if (direction === 'prev' && currentIndex > 0) {
+            setSelectedQuestion(filteredQuestions[currentIndex - 1]);
+          } else if (direction === 'next' && currentIndex < filteredQuestions.length - 1) {
+            setSelectedQuestion(filteredQuestions[currentIndex + 1]);
+          }
         }}
       />
     </div>

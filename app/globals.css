@@ -52,11 +52,18 @@ div.critical-container-4xl {
 
 /* 강제 다크 테마 */
 html {
-  color-scheme: dark;
+  color-scheme: dark !important;
+  background-color: #020617 !important; /* slate-950 */
 }
 
 html.dark {
-  color-scheme: dark;
+  color-scheme: dark !important;
+  background-color: #020617 !important;
+}
+
+html:not(.dark) {
+  color-scheme: dark !important;
+  background-color: #020617 !important;
 }
 
 body {
@@ -64,8 +71,13 @@ body {
   width: 100%;
   margin: 0;
   padding: 0;
-  background-color: #020617; /* slate-950 */
-  color: #e2e8f0; /* slate-200 */
+  background-color: #020617 !important; /* slate-950 */
+  color: #e2e8f0 !important; /* slate-200 */
+}
+
+/* 모든 요소에 다크 테마 강제 */
+* {
+  color-scheme: dark !important;
 }
 
 .blob-anim {

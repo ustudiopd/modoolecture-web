@@ -7,7 +7,7 @@ import AdminLayout from '@/components/admin/AdminLayout';
 import BlogEditor from '@/components/editor/BlogEditor';
 import { generatePromptMarkdown, copyToClipboard } from '@/lib/utils/markdown';
 import type { JSONContent } from 'novel';
-import { Copy, Save, ArrowLeft } from 'lucide-react';
+import { Copy, Save, ArrowLeft, Sparkles, Loader2, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
 
 interface Question {
   id: string;
@@ -36,7 +36,12 @@ export default function QuestionDetailPage() {
   const [question, setQuestion] = useState<Question | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [generatingTitle, setGeneratingTitle] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [toast, setToast] = useState({ show: false, message: '' });
+  const [questionIds, setQuestionIds] = useState<string[]>([]);
+  const [currentIndex, setCurrentIndex] = useState<number>(-1);
 
   // 질문 정보 편집 상태
   const [editData, setEditData] = useState({
@@ -80,6 +85,19 @@ export default function QuestionDetailPage() {
         display_name_raw: q.display_name_raw || '',
         author_email: q.author_email || '',
       });
+
+      // 같은 이벤트의 질문 목록 가져오기
+      if (q.event_id) {
+        const questionsResponse = await fetch(`/api/admin/questions?event_id=${q.event_id}`);
+        const questionsData = await questionsResponse.json();
+        
+        if (questionsResponse.ok && questionsData.questions) {
+          const ids = questionsData.questions.map((q: Question) => q.id);
+          setQuestionIds(ids);
+          const index = ids.indexOf(questionId);
+          setCurrentIndex(index);
+        }
+      }
 
       // 질문 본문을 JSONContent로 변환
       if (q.content) {
@@ -166,6 +184,61 @@ export default function QuestionDetailPage() {
     return extractText(content);
   };
 
+  // 이전/다음 질문으로 이동
+  const navigateToQuestion = (direction: 'prev' | 'next') => {
+    if (currentIndex === -1 || questionIds.length === 0) return;
+    
+    let newIndex: number;
+    if (direction === 'prev') {
+      newIndex = currentIndex - 1;
+      if (newIndex < 0) return; // 첫 번째 질문이면 이동하지 않음
+    } else {
+      newIndex = currentIndex + 1;
+      if (newIndex >= questionIds.length) return; // 마지막 질문이면 이동하지 않음
+    }
+    
+    const newQuestionId = questionIds[newIndex];
+    router.push(`/admin/questions/${newQuestionId}`);
+  };
+
+  // 제목 다시 요약하기
+  const handleRegenerateTitle = async () => {
+    try {
+      setGeneratingTitle(true);
+      
+      // 본문 내용 추출
+      const contentText = extractTextFromContent(questionContent || editData.content);
+      
+      if (!contentText || contentText.trim().length === 0) {
+        setToast({ show: true, message: '본문 내용이 없습니다. 먼저 질문 본문을 입력해주세요.' });
+        return;
+      }
+
+      const response = await fetch('/api/admin/questions/generate-title', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question: contentText }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || '제목 생성에 실패했습니다.');
+      }
+
+      // 생성된 제목으로 업데이트
+      setEditData({ ...editData, title: data.title });
+      setToast({ show: true, message: '제목이 생성되었습니다.' });
+    } catch (error) {
+      setToast({
+        show: true,
+        message: error instanceof Error ? error.message : '제목 생성에 실패했습니다.',
+      });
+    } finally {
+      setGeneratingTitle(false);
+    }
+  };
+
   // Copy for LLM
   const handleCopyForLLM = async () => {
     if (!question) return;
@@ -235,6 +308,39 @@ export default function QuestionDetailPage() {
     }
   };
 
+  // 질문 삭제
+  const handleDeleteQuestion = async () => {
+    if (!question) return;
+
+    try {
+      setDeleting(true);
+      const response = await fetch(`/api/admin/questions/${questionId}`, {
+        method: 'DELETE',
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || '삭제에 실패했습니다.');
+      }
+
+      setToast({ show: true, message: '질문이 삭제되었습니다.' });
+      
+      // 질문 목록 페이지로 이동
+      setTimeout(() => {
+        router.push(`/admin/events/${question.event_id}/questions`);
+      }, 1000);
+    } catch (error) {
+      setToast({
+        show: true,
+        message: error instanceof Error ? error.message : '삭제에 실패했습니다.',
+      });
+      setShowDeleteConfirm(false);
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   // 답변 저장
   const handleSaveAnswers = async () => {
     if (!question) return;
@@ -297,7 +403,25 @@ export default function QuestionDetailPage() {
             >
               <ArrowLeft className="w-5 h-5" />
             </Link>
-            <h1 className="text-3xl font-bold text-white">질문 편집</h1>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => navigateToQuestion('prev')}
+                disabled={currentIndex <= 0}
+                className="p-1.5 text-slate-400 hover:text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                title="이전 질문"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <h1 className="text-3xl font-bold text-white">질문 편집</h1>
+              <button
+                onClick={() => navigateToQuestion('next')}
+                disabled={currentIndex === -1 || currentIndex >= questionIds.length - 1}
+                className="p-1.5 text-slate-400 hover:text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                title="다음 질문"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
           </div>
           <div className="flex gap-2">
             <button
@@ -313,10 +437,48 @@ export default function QuestionDetailPage() {
               className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition disabled:opacity-50"
             >
               <Save className="w-4 h-4" />
-              질문 저장
+              저장
+            </button>
+            <button
+              onClick={() => setShowDeleteConfirm(true)}
+              disabled={deleting}
+              className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition disabled:opacity-50"
+            >
+              <Trash2 className="w-4 h-4" />
+              삭제
             </button>
           </div>
         </div>
+
+        {/* 삭제 확인 모달 */}
+        {showDeleteConfirm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-slate-900 rounded-lg shadow-xl max-w-md w-full mx-4 border border-slate-800">
+              <div className="p-6">
+                <h2 className="text-2xl font-bold mb-4 text-white">질문 삭제</h2>
+                <p className="text-slate-300 mb-6">
+                  정말로 이 질문을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
+                </p>
+                <div className="flex justify-end gap-3">
+                  <button
+                    onClick={() => setShowDeleteConfirm(false)}
+                    disabled={deleting}
+                    className="px-4 py-2 border border-slate-700 rounded-md text-slate-300 hover:bg-slate-800 transition disabled:opacity-50"
+                  >
+                    취소
+                  </button>
+                  <button
+                    onClick={handleDeleteQuestion}
+                    disabled={deleting}
+                    className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition disabled:opacity-50"
+                  >
+                    {deleting ? '삭제 중...' : '삭제'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Toast */}
         {toast.show && (
@@ -331,9 +493,28 @@ export default function QuestionDetailPage() {
             <h2 className="text-xl font-bold mb-4 text-white">질문 정보</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">
-                  제목 *
-                </label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-sm font-medium text-slate-300">
+                    제목 *
+                  </label>
+                  <button
+                    onClick={handleRegenerateTitle}
+                    disabled={generatingTitle}
+                    className="flex items-center gap-1.5 px-3 py-1 text-xs bg-blue-600 hover:bg-blue-700 text-white rounded-md transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {generatingTitle ? (
+                      <>
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                        생성 중...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-3 h-3" />
+                        제목 다시 요약하기
+                      </>
+                    )}
+                  </button>
+                </div>
                 <input
                   type="text"
                   value={editData.title}
@@ -457,7 +638,7 @@ export default function QuestionDetailPage() {
                 className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition disabled:opacity-50"
               >
                 <Save className="w-4 h-4" />
-                답변 저장
+                저장
               </button>
             </div>
           </div>

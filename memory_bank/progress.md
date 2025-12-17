@@ -1,5 +1,45 @@
 # 완료된 작업 내역 (Progress)
 
+## [2025-01-16]
+- **다크 테마 강제 적용**: 배포 환경에서도 다크 테마가 적용되도록 수정
+  - `app/layout.tsx`: html과 body에 dark 클래스 추가, suppressHydrationWarning 추가
+  - `app/globals.css`: color-scheme: dark 강제 설정, 배경색/텍스트 색상 !important로 강제 적용
+  - `app/admin/events/[eventId]/questions/page.tsx`: 관리자 페이지 전체 다크 테마 적용 (테이블, 모달, 입력 필드 등)
+- **Next.js 16 호환성 수정**: 동적 라우트 params를 Promise로 처리
+  - `app/api/events/[slug]/route.ts`: params를 Promise로 변경
+  - `app/api/admin/events/[id]/route.ts`: params를 Promise로 변경
+  - `app/api/admin/questions/[id]/route.ts`: params를 Promise로 변경
+  - `app/api/admin/questions/[id]/answers/route.ts`: params를 Promise로 변경
+- **배포 환경 문제 진단**: 배포 환경에서 목록이 표시되지 않는 문제 분석 보고서 작성
+  - `배포환경_목록_미표시_문제_보고서.md`: 환경 변수, API 라우트, Supabase 클라이언트 초기화 등 원인 분석 및 해결 방안 제시
+- **질문 일괄 삽입 기능**: Markdown 파일에서 질문을 파싱하여 데이터베이스에 일괄 삽입하는 스크립트 구현
+  - `scripts/bulk-insert-questions.ts`: YAML 프론트매터 형식의 질문 파싱 및 삽입
+  - `scripts/delete-event-questions.ts`: 특정 이벤트의 모든 질문 삭제 스크립트
+  - 177개 질문 일괄 삽입 완료 (ai-2025 이벤트)
+- **질문 관리 화면 개선**: 관리자 화면에 답변 상태 필터 탭 추가
+  - Gemini 답변 있음, GPT 답변 있음, 답변 없음 탭 추가
+  - `app/admin/events/[eventId]/questions/page.tsx` 수정
+- **질문 등록 폼 개선**: 이메일 필드 추가 및 마스킹 이름 필드 제거
+  - 작성자 이름 아래에 이메일 입력 필드 추가
+- **카테고리 필터 개선**: 검색창 아래 필터를 토픽 태그 10개로 변경
+  - `lib/types/question-tags.ts`에 `getTopicFilterOptions()` 함수 추가
+  - `app/board/[event]/page.tsx`에서 필터링 로직을 `primary_topic` 기준으로 변경
+  - "없음" 태그 제외 및 버튼 크기 축소
+- **QuestionCard 태그 표시 개선**: 관리 화면과 동일하게 모든 태그 표시
+  - `primary_topic`, `secondary_topics`, `intent` 필드 모두 표시
+  - 한글 변환 및 색상 구분 적용
+- **답변 좋아요 기능**: Gemini/GPT 답변에 좋아요 기능 추가
+  - `modu_answer_likes` 테이블 생성 (마이그레이션)
+  - `app/api/answer-like/route.ts` API 엔드포인트 추가
+  - `components/board/QuestionModal.tsx`에 좋아요 버튼 및 카운트 표시
+- **답변 전체 화면 보기**: 답변 섹션 클릭 시 전체 화면 모드
+  - `fullscreenAnswer` 상태로 개별 답변 전체 화면 표시
+  - 로고/이름 클릭 또는 ESC 키로 복귀
+- **답변 블러 처리**: 모달 열릴 때 답변을 블러 처리하고 "답변보기" 버튼 추가
+  - `showAnswers` 상태로 답변 표시 제어
+  - Expert Answer는 블러 처리하지 않음
+- **Navbar 개선**: 데스크톱 메뉴에서 로그인 버튼 제거
+
 ## [2024-12-19]
 - **Novel.sh 기반 블로그 에디터 구현**: Novel.sh 라이브러리를 사용한 리치 텍스트 에디터 구현 완료
   - Tiptap 기반 에디터 설정 (StarterKit, Image, Link, YouTube 확장)

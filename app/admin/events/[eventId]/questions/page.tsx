@@ -206,28 +206,28 @@ export default function EventQuestionsPage() {
           <div className="flex items-center gap-4 mb-6">
             <Link
               href="/admin/events"
-              className="text-gray-600 hover:text-gray-900"
+              className="text-slate-400 hover:text-slate-200"
             >
               <ArrowLeft className="w-5 h-5" />
             </Link>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold text-white">
                 질문 관리
               </h1>
               {event && (
-                <p className="text-sm text-gray-500 mt-1">{event.title}</p>
+                <p className="text-sm text-slate-400 mt-1">{event.title}</p>
               )}
             </div>
           </div>
 
           {error && (
-            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded text-red-800">
+            <div className="mb-4 p-4 bg-red-900/20 border border-red-800 rounded text-red-300">
               {error}
             </div>
           )}
 
           <div className="flex justify-between items-center mb-6">
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-slate-400">
               총 {questions.length}개의 질문
             </div>
             <button
@@ -240,47 +240,47 @@ export default function EventQuestionsPage() {
           </div>
 
           {loading ? (
-            <div className="text-center py-12">로딩 중...</div>
+            <div className="text-center py-12 text-slate-400">로딩 중...</div>
           ) : (
-            <div className="bg-white rounded-lg shadow overflow-hidden">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+            <div className="bg-slate-900 rounded-lg shadow overflow-hidden border border-slate-800">
+              <table className="min-w-full divide-y divide-slate-800">
+                <thead className="bg-slate-800">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">
                       제목
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">
                       태그
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">
                       작성자
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">
                       좋아요
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">
                       작성일
                     </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-right text-xs font-medium text-slate-300 uppercase tracking-wider">
                       작업
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-slate-900 divide-y divide-slate-800">
                   {questions.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                      <td colSpan={6} className="px-6 py-12 text-center text-slate-400">
                         등록된 질문이 없습니다.
                       </td>
                     </tr>
                   ) : (
                     questions.map((question) => (
-                      <tr key={question.id} className="hover:bg-gray-50">
+                      <tr key={question.id} className="hover:bg-slate-800">
                         <td className="px-6 py-4">
-                          <div className="text-sm font-medium text-gray-900 max-w-md truncate">
+                          <div className="text-sm font-medium text-white max-w-md truncate">
                             {question.title}
                           </div>
-                          <div className="text-xs text-gray-500 mt-1 max-w-md truncate">
+                          <div className="text-xs text-slate-400 mt-1 max-w-md truncate">
                             {question.content}
                           </div>
                         </td>
@@ -288,7 +288,7 @@ export default function EventQuestionsPage() {
                           <div className="flex flex-wrap gap-1">
                             {question.primary_topic && 
                               splitCompoundTag(question.primary_topic).map((tag, idx) => (
-                                <span key={`primary-${idx}`} className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                                <span key={`primary-${idx}`} className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-900/30 text-blue-400">
                                   {tag}
                                 </span>
                               ))
@@ -296,7 +296,7 @@ export default function EventQuestionsPage() {
                             {question.secondary_topics && question.secondary_topics.length > 0 && 
                               question.secondary_topics.flatMap(topic => 
                                 splitCompoundTag(topic).map((tag, idx) => (
-                                  <span key={`secondary-${topic}-${idx}`} className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-gray-100 text-gray-700">
+                                  <span key={`secondary-${topic}-${idx}`} className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-slate-800 text-slate-300">
                                     {tag}
                                   </span>
                                 ))
@@ -304,28 +304,28 @@ export default function EventQuestionsPage() {
                             }
                             {question.intent && 
                               splitCompoundTag(question.intent).map((tag, idx) => (
-                                <span key={`intent-${idx}`} className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-purple-100 text-purple-700">
+                                <span key={`intent-${idx}`} className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-purple-900/30 text-purple-400">
                                   {tag}
                                 </span>
                               ))
                             }
                             {!question.primary_topic && !question.intent && (
-                              <span className="text-sm text-gray-400">-</span>
+                              <span className="text-sm text-slate-500">-</span>
                             )}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-500">
+                          <div className="text-sm text-slate-300">
                             {question.display_name_masked || question.display_name_raw || '-'}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-500">
+                          <div className="text-sm text-slate-300">
                             {question.like_count}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-500">
+                          <div className="text-sm text-slate-300">
                             {new Date(question.created_at).toLocaleDateString('ko-KR')}
                           </div>
                         </td>
@@ -333,13 +333,13 @@ export default function EventQuestionsPage() {
                           <div className="flex justify-end gap-2">
                             <Link
                               href={`/admin/questions/${question.id}`}
-                              className="text-blue-600 hover:text-blue-900"
+                              className="text-blue-400 hover:text-blue-300"
                             >
                               <Edit className="w-4 h-4" />
                             </Link>
                             <button
                               onClick={() => handleDelete(question.id)}
-                              className="text-red-600 hover:text-red-900"
+                              className="text-red-400 hover:text-red-300"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -356,13 +356,13 @@ export default function EventQuestionsPage() {
           {/* 생성 모달 */}
           {showCreateModal && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+              <div className="bg-slate-900 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto border border-slate-800">
                 <div className="p-6">
-                  <h2 className="text-2xl font-bold mb-4">새 질문 생성</h2>
+                  <h2 className="text-2xl font-bold mb-4 text-white">새 질문 생성</h2>
                   <form onSubmit={handleCreate}>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-slate-300 mb-1">
                           질문 *
                         </label>
                         <textarea
@@ -371,16 +371,16 @@ export default function EventQuestionsPage() {
                             setFormData({ ...formData, question: e.target.value })
                           }
                           rows={8}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-slate-700 rounded-md bg-slate-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                           placeholder="질문을 입력하세요..."
                           required
                         />
-                        <p className="mt-1 text-xs text-gray-500">
+                        <p className="mt-1 text-xs text-slate-400">
                           질문 내용이 자동으로 카테고리로 분류됩니다.
                         </p>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-slate-300 mb-1">
                           카테고리
                         </label>
                         <input
@@ -389,12 +389,12 @@ export default function EventQuestionsPage() {
                           onChange={(e) =>
                             setFormData({ ...formData, category: e.target.value })
                           }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-slate-700 rounded-md bg-slate-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                           placeholder="Tech/Dev, Business, Career 등"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-slate-300 mb-1">
                           작성자 이름 (원본)
                         </label>
                         <input
@@ -403,11 +403,11 @@ export default function EventQuestionsPage() {
                           onChange={(e) =>
                             setFormData({ ...formData, display_name_raw: e.target.value })
                           }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-slate-700 rounded-md bg-slate-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-slate-300 mb-1">
                           작성자 이름 (마스킹)
                         </label>
                         <input
@@ -416,7 +416,7 @@ export default function EventQuestionsPage() {
                           onChange={(e) =>
                             setFormData({ ...formData, display_name_masked: e.target.value })
                           }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-slate-700 rounded-md bg-slate-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
                     </div>
@@ -424,7 +424,7 @@ export default function EventQuestionsPage() {
                       <button
                         type="button"
                         onClick={resetForm}
-                        className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition"
+                        className="px-4 py-2 border border-slate-700 rounded-md text-slate-300 hover:bg-slate-800 transition"
                       >
                         취소
                       </button>

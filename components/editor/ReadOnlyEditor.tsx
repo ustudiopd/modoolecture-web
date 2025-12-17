@@ -73,12 +73,39 @@ export default function ReadOnlyEditor({ content, className }: ReadOnlyEditorPro
     );
   }
 
+  if (!jsonContent) {
+    return (
+      <div className={cn("w-full", className)}>
+        <div className="prose prose-invert max-w-none px-4 py-2 text-slate-200">
+          <p className="text-slate-400">내용이 없습니다.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // EditorContent를 안전하게 렌더링
+  // extensions가 제대로 로드되었는지 확인
+  if (!extensions || extensions.length === 0) {
+    console.error('Extensions not loaded');
+    return (
+      <div className={cn("w-full", className)}>
+        <div className="prose prose-invert max-w-none px-4 py-2 text-slate-200">
+          {typeof content === 'string' ? (
+            <p>{content}</p>
+          ) : (
+            <p>에디터를 초기화할 수 없습니다.</p>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={cn("w-full", className)}>
       <EditorRoot>
         <EditorContent
           extensions={extensions as any}
-          initialContent={jsonContent ?? undefined}
+          initialContent={jsonContent}
           editable={false}
           editorProps={{
             attributes: {

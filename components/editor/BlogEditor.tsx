@@ -44,6 +44,45 @@ export default function BlogEditor({
   placeholder = '내용을 입력하세요...',
 }: BlogEditorProps) {
   const commandRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // 이미지 업로드 핸들러
+  const handleImageUpload = async (editor: any) => {
+    // 파일 입력 요소 생성
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/jpeg,image/jpg,image/png,image/gif,image/webp';
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+
+      try {
+        // FormData 생성
+        const formData = new FormData();
+        formData.append('file', file);
+
+        // 업로드 API 호출
+        const response = await fetch('/api/admin/upload-image', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || '이미지 업로드에 실패했습니다.');
+        }
+
+        const { url } = await response.json();
+        
+        // 에디터에 이미지 삽입
+        editor.chain().focus().setImage({ src: url }).run();
+      } catch (error) {
+        console.error('이미지 업로드 오류:', error);
+        alert(error instanceof Error ? error.message : '이미지 업로드에 실패했습니다.');
+      }
+    };
+    input.click();
+  };
 
   const getSuggestionItems = ({ query }: { query: string }) => {
     return [
@@ -120,14 +159,11 @@ export default function BlogEditor({
       },
       {
         title: '이미지',
-        description: '이미지 삽입',
+        description: '이미지 업로드 및 삽입',
         icon: ImageIcon,
         command: ({ editor, range }: any) => {
           editor.chain().focus().deleteRange(range).run();
-          const url = window.prompt('이미지 URL을 입력하세요:');
-          if (url) {
-            editor.chain().focus().setImage({ src: url }).run();
-          }
+          handleImageUpload(editor);
         },
       },
       {
@@ -189,7 +225,7 @@ export default function BlogEditor({
           }}
           editorProps={{
             attributes: {
-              class: 'prose prose-invert max-w-none focus:outline-none min-h-[400px] px-4 py-2',
+              class: 'prose prose-invert max-w-none focus:outline-none min-h-[400px] px-4 py-2 text-slate-200',
             },
           }}
         >
@@ -365,17 +401,14 @@ export default function BlogEditor({
                   value="image"
                   onCommand={({ editor, range }) => {
                     editor.chain().focus().deleteRange(range).run();
-                    const url = window.prompt('이미지 URL을 입력하세요:');
-                    if (url) {
-                      editor.chain().focus().setImage({ src: url }).run();
-                    }
+                    handleImageUpload(editor);
                   }}
                   className="flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm hover:bg-slate-100 dark:hover:bg-slate-700"
                 >
                   <ImageIcon className="h-4 w-4" />
                   <div>
                     <p className="font-medium">이미지</p>
-                    <p className="text-xs text-slate-500">이미지 삽입</p>
+                    <p className="text-xs text-slate-500">이미지 업로드 및 삽입</p>
                   </div>
                 </EditorCommandItem>
                 <EditorCommandItem

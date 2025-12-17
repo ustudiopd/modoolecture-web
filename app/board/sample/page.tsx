@@ -21,6 +21,7 @@ const sampleQuestions = [
       "System Prompt에 '모르면 모른다고 대답하라'는 제약 조건을 강력하게 걸고, Temperature를 0에 가깝게 설정하세요. 검색된 청크(Chunk)의 신뢰도 점수를 필터링하는 단계가 필요합니다.",
     category: 'Tech/Dev',
     vote_count: 42,
+    like_count: 42,
     comments: 5,
     created_at: '2025-12-10T00:00:00Z',
     is_answered: true,
@@ -33,6 +34,7 @@ const sampleQuestions = [
     answer: null,
     category: 'Business',
     vote_count: 38,
+    like_count: 38,
     comments: 12,
     created_at: '2025-12-12T00:00:00Z',
     is_answered: false,
@@ -46,6 +48,7 @@ const sampleQuestions = [
       "단순한 프롬프트 작성이 아니라, AI 워크플로우를 설계하고 평가(Eval)하는 'AI 오케스트레이터'로 역할이 진화하고 있습니다.",
     category: 'Career',
     vote_count: 31,
+    like_count: 31,
     comments: 8,
     created_at: '2025-12-14T00:00:00Z',
     is_answered: true,
@@ -58,6 +61,7 @@ const sampleQuestions = [
     answer: null,
     category: 'Ethics',
     vote_count: 25,
+    like_count: 25,
     comments: 3,
     created_at: '2025-12-11T00:00:00Z',
     is_answered: false,
@@ -71,6 +75,7 @@ const sampleQuestions = [
       '아직 명확한 국제 표준은 없으나, 인간의 창작적 기여가 인정되는 부분에 한해 저작권을 인정하는 추세입니다.',
     category: 'Ethics',
     vote_count: 19,
+    like_count: 19,
     comments: 2,
     created_at: '2025-12-09T00:00:00Z',
     is_answered: true,
@@ -242,8 +247,10 @@ export default function SampleBoardPage() {
               <QuestionCard
                 key={question.id}
                 question={question}
-                onVote={handleVote}
-                voted={votedQuestions.has(question.id)}
+                onLike={async (id) => {
+                  await handleVote(id);
+                }}
+                liked={votedQuestions.has(question.id)}
               />
             ))}
           </div>

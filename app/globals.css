@@ -1,11 +1,60 @@
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
 
+/* Critical CSS: Tailwind 로딩 전에도 컨테이너 정렬이 먼저 적용되도록 */
+/* Tailwind max-w-4xl(56rem), max-w-7xl(80rem) + mx-auto + px-4/sm:px-6/lg:px-8를 흉내냄 */
+.critical-container-4xl {
+  width: 100% !important;
+  max-width: 56rem !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+  box-sizing: border-box !important;
+}
+
+.critical-container-7xl {
+  width: 100% !important;
+  max-width: 80rem !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+  box-sizing: border-box !important;
+}
+
+@media (min-width: 640px) {
+  .critical-container-7xl {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .critical-container-7xl {
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+  }
+}
+
+/* 강제 적용: 모든 max-w 컨테이너에 즉시 적용 */
+nav .critical-container-7xl,
+main.critical-container-4xl,
+header .critical-container-4xl,
+div.critical-container-4xl {
+  width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
   font-family: 'Pretendard', sans-serif;
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 .blob-anim {
@@ -52,5 +101,49 @@ body {
   display: inline-block;
   max-width: 100%;
   cursor: pointer;
+}
+
+/* Novel 에디터 텍스트 색상 (다크 테마용) */
+.prose-invert {
+  color: #e2e8f0 !important; /* text-slate-200 */
+}
+
+.prose-invert p {
+  color: #e2e8f0 !important;
+}
+
+.prose-invert h1,
+.prose-invert h2,
+.prose-invert h3,
+.prose-invert h4,
+.prose-invert h5,
+.prose-invert h6 {
+  color: #f1f5f9 !important; /* text-slate-100 */
+}
+
+.prose-invert strong {
+  color: #ffffff !important;
+}
+
+.prose-invert code {
+  color: #cbd5e1 !important; /* text-slate-300 */
+  background-color: #1e293b !important; /* bg-slate-800 */
+}
+
+.prose-invert li {
+  color: #e2e8f0 !important;
+}
+
+.prose-invert blockquote {
+  color: #cbd5e1 !important; /* text-slate-300 */
+  border-left-color: #475569 !important; /* border-slate-600 */
+}
+
+.prose-invert a {
+  color: #60a5fa !important; /* text-blue-400 */
+}
+
+.prose-invert a:hover {
+  color: #93c5fd !important; /* text-blue-300 */
 }
 

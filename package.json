@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.87.3",
+    "@tailwindcss/typography": "^0.5.19",
     "@tiptap/core": "^3.13.0",
     "@tiptap/extension-image": "^3.13.0",
     "@tiptap/extension-link": "^3.13.0",
@@ -26,6 +27,9 @@
     "novel": "^1.0.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-markdown": "^10.1.0",
+    "rehype-raw": "^7.0.0",
+    "remark-gfm": "^4.0.1",
     "tailwind-merge": "^2.2.0",
     "tippy.js": "^6.3.7"
   },

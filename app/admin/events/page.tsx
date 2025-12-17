@@ -78,7 +78,7 @@ export default function EventsPage() {
         body: JSON.stringify({
           ...formData,
           event_date: formData.event_date || null,
-          notebooklm_url: formData.notebooklm_url || null,
+          notebooklm_url: formData.notebooklm_url?.trim() || null,
         }),
       });
 
@@ -112,7 +112,7 @@ export default function EventsPage() {
         body: JSON.stringify({
           ...formData,
           event_date: formData.event_date || null,
-          notebooklm_url: formData.notebooklm_url || null,
+          notebooklm_url: formData.notebooklm_url?.trim() || null,
         }),
       });
 

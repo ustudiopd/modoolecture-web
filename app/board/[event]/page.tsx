@@ -251,17 +251,29 @@ export default function BoardPage() {
               </p>
 
               {event.notebooklm_url && (
-                <div className="flex flex-col sm:flex-row justify-center gap-3">
+                <div className="flex flex-col items-center gap-2">
                   <a
-                    href={event.notebooklm_url}
+                    href={event.notebooklm_url.trim()}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={(e) => {
+                      // 링크가 유효한지 확인
+                      const url = event.notebooklm_url?.trim();
+                      if (!url || !url.startsWith('http')) {
+                        e.preventDefault();
+                        alert('유효하지 않은 링크입니다.');
+                        return;
+                      }
+                    }}
                     className="flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white px-6 py-3 rounded-lg font-bold transition-all shadow-lg shadow-blue-900/30 group"
                   >
                     <MessageCircle className="w-5 h-5" />
                     <span>전체 질문 AI 챗봇 (NotebookLM)</span>
                     <ExternalLink className="w-4 h-4 opacity-50 group-hover:translate-x-1 transition-transform" />
                   </a>
+                  <p className="text-xs text-slate-400 mt-1">
+                    노트북LM을 사용하기 위해서는 구글ID 로그인이 필요합니다
+                  </p>
                 </div>
               )}
             </div>

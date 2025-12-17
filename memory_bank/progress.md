@@ -1,6 +1,24 @@
 # 완료된 작업 내역 (Progress)
 
 ## [2025-01-17]
+- **NotebookLM 연동 개선**: 이벤트 보드에 NotebookLM 링크 추가 및 개선
+  - 이벤트 편집 페이지에서 NotebookLM URL 입력 필드 추가
+  - 보드 페이지에 "전체 질문 AI 챗봇 (NotebookLM)" 버튼 추가
+  - 링크 클릭 시 새 탭에서 열리도록 개선 (trim 처리 및 유효성 검사)
+  - 버튼 아래 "노트북LM을 사용하기 위해서는 구글ID 로그인이 필요합니다" 안내 문구 추가
+- **질문답변 문서화**: 161개 질문과 답변을 마크다운 파일로 생성
+  - `scripts/export-questions-to-markdown.ts` 스크립트 생성
+  - `app/api/admin/export-questions/route.ts` API 엔드포인트 생성
+  - 각 질문에 LLM 프롬프트 포함
+  - ChatGPT와 Gemini 답변 비교 분석 가능한 형식으로 정리
+  - 노트북 LM 활용 가이드 및 태그 체계 설명 포함
+- **답변 블라인드 토글 기능**: 답변 가리기/보기 토글 기능 추가
+  - T 버튼 옆에 눈 아이콘 토글 버튼 추가
+  - 기본값: 블라인드 ON (답변 가려짐)
+  - localStorage에 상태 저장하여 페이지 재방문 시에도 유지
+  - 모달 열릴 때마다 localStorage에서 상태 읽어오기
+
+## [2025-01-17]
 - **질문 리스트 태그 표시 개선**: 17개 분류 태그 시스템 구현
 - **모델명 표시 추가**: Gemini/GPT 답변 카드에 모델명 표시
   - Gemini: "gemini 3.0 pro" 추가

@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { 
   EditorRoot, 
   EditorContent,
@@ -13,18 +14,27 @@ interface ReadOnlyEditorProps {
 }
 
 export default function ReadOnlyEditor({ content, className }: ReadOnlyEditorProps) {
-  // content가 문자열인 경우 JSONContent로 변환
-  let jsonContent: JSONContent | null = null;
-  
-  if (content) {
-    if (typeof content === 'string') {
-      try {
+  const [mounted, setMounted] = useState(false);
+  const [jsonContent, setJsonContent] = useState<JSONContent | null>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!content) {
+      setJsonContent(null);
+      return;
+    }
+
+    try {
+      if (typeof content === 'string') {
         // JSON 문자열인 경우 파싱
         if (content.trim().startsWith('{')) {
-          jsonContent = JSON.parse(content);
+          setJsonContent(JSON.parse(content));
         } else {
           // 일반 텍스트인 경우 JSONContent로 변환
-          jsonContent = {
+          setJsonContent({
             type: 'doc',
             content: [
               {
@@ -32,23 +42,34 @@ export default function ReadOnlyEditor({ content, className }: ReadOnlyEditorPro
                 content: [{ type: 'text', text: content }],
               },
             ],
-          };
+          });
         }
-      } catch (error) {
-        // 파싱 실패 시 일반 텍스트로 처리
-        jsonContent = {
-          type: 'doc',
-          content: [
-            {
-              type: 'paragraph',
-              content: [{ type: 'text', text: content }],
-            },
-          ],
-        };
+      } else {
+        setJsonContent(content);
       }
-    } else {
-      jsonContent = content;
+    } catch (error) {
+      // 파싱 실패 시 일반 텍스트로 처리
+      console.error('Failed to parse content:', error);
+      setJsonContent({
+        type: 'doc',
+        content: [
+          {
+            type: 'paragraph',
+            content: [{ type: 'text', text: typeof content === 'string' ? content : 'Invalid content' }],
+          },
+        ],
+      });
     }
+  }, [content]);
+
+  if (!mounted) {
+    return (
+      <div className={cn("w-full", className)}>
+        <div className="prose prose-invert max-w-none px-4 py-2 text-slate-200">
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
   }
 
   return (

@@ -1,16 +1,33 @@
 # 완료된 작업 내역 (Progress)
 
 ## [2025-01-16]
-- **질문 모달 방송용 개선**: 질문 모달을 방송용으로 사용할 수 있도록 개선
-  - ReadOnlyEditor 컴포넌트 생성: Novel.sh 에디터를 읽기 전용으로 사용하는 컴포넌트 구현
-  - QuestionModal에서 ReactMarkdown을 ReadOnlyEditor로 교체: 질문 본문과 답변을 Novel.sh 에디터로 표시
-  - 폰트 크기 조정: 제목은 유지, 질문 내용과 답변은 제목의 절반 크기로 설정 (30% 축소)
-  - 폰트 크기 토글 기능: 좋아요 옆에 T 아이콘 추가하여 확대/원래 크기 토글 가능
-  - 질문 네비게이션: 하단 중앙에 좌우 화살표 추가하여 이전/다음 질문으로 이동 가능
-  - 키보드 단축키: 좌우 화살표 키로 질문 네비게이션, ESC로 전체 화면 닫기
-  - 답변 전체 화면 보기: Gemini/ChatGPT 답변 섹션 클릭 시 해당 답변만 전체 화면으로 표시
-  - 전체 화면 모드에서 닫기 버튼 및 ESC 키로 원래 레이아웃으로 복귀
-- **빌드 오류 수정**: JSX 구문 오류 및 상태 초기화 순서 문제 수정
+- **질문 일괄 삽입 기능**: Markdown 파일에서 질문을 파싱하여 데이터베이스에 일괄 삽입하는 스크립트 구현
+  - `scripts/bulk-insert-questions.ts`: YAML 프론트매터 형식의 질문 파싱 및 삽입
+  - `scripts/delete-event-questions.ts`: 특정 이벤트의 모든 질문 삭제 스크립트
+  - 177개 질문 일괄 삽입 완료 (ai-2025 이벤트)
+- **질문 관리 화면 개선**: 관리자 화면에 답변 상태 필터 탭 추가
+  - Gemini 답변 있음, GPT 답변 있음, 답변 없음 탭 추가
+  - `app/admin/events/[eventId]/questions/page.tsx` 수정
+- **질문 등록 폼 개선**: 이메일 필드 추가 및 마스킹 이름 필드 제거
+  - 작성자 이름 아래에 이메일 입력 필드 추가
+- **카테고리 필터 개선**: 검색창 아래 필터를 토픽 태그 10개로 변경
+  - `lib/types/question-tags.ts`에 `getTopicFilterOptions()` 함수 추가
+  - `app/board/[event]/page.tsx`에서 필터링 로직을 `primary_topic` 기준으로 변경
+  - "없음" 태그 제외 및 버튼 크기 축소
+- **QuestionCard 태그 표시 개선**: 관리 화면과 동일하게 모든 태그 표시
+  - `primary_topic`, `secondary_topics`, `intent` 필드 모두 표시
+  - 한글 변환 및 색상 구분 적용
+- **답변 좋아요 기능**: Gemini/GPT 답변에 좋아요 기능 추가
+  - `modu_answer_likes` 테이블 생성 (마이그레이션)
+  - `app/api/answer-like/route.ts` API 엔드포인트 추가
+  - `components/board/QuestionModal.tsx`에 좋아요 버튼 및 카운트 표시
+- **답변 전체 화면 보기**: 답변 섹션 클릭 시 전체 화면 모드
+  - `fullscreenAnswer` 상태로 개별 답변 전체 화면 표시
+  - 로고/이름 클릭 또는 ESC 키로 복귀
+- **답변 블러 처리**: 모달 열릴 때 답변을 블러 처리하고 "답변보기" 버튼 추가
+  - `showAnswers` 상태로 답변 표시 제어
+  - Expert Answer는 블러 처리하지 않음
+- **Navbar 개선**: 데스크톱 메뉴에서 로그인 버튼 제거
 
 ## [2024-12-19]
 - **Novel.sh 기반 블로그 에디터 구현**: Novel.sh 라이브러리를 사용한 리치 텍스트 에디터 구현 완료

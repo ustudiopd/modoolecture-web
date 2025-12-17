@@ -4,10 +4,8 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import AdminLayout from '@/components/admin/AdminLayout';
-import BlogEditor from '@/components/editor/BlogEditor';
 import { ArrowLeft, Plus, Edit, Trash2, Eye } from 'lucide-react';
 import { splitCompoundTag } from '@/lib/types/question-tags';
-import type { JSONContent } from 'novel';
 
 interface Question {
   id: string;
@@ -50,7 +48,6 @@ export default function EventQuestionsPage() {
     display_name_raw: '',
     display_name_masked: '',
   });
-  const [questionContent, setQuestionContent] = useState<JSONContent | null>(null);
 
   // 이벤트 정보 로드
   const loadEvent = async () => {
@@ -107,7 +104,6 @@ export default function EventQuestionsPage() {
       display_name_raw: '',
       display_name_masked: '',
     });
-    setQuestionContent(null);
     setShowCreateModal(false);
   };
 
@@ -115,68 +111,35 @@ export default function EventQuestionsPage() {
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // JSONContent를 텍스트로 변환 (간단한 추출)
-      let contentText = '';
-      if (questionContent) {
-        // JSONContent에서 텍스트 추출
-        const extractText = (node: JSONContent): string => {
-          if (node.type === 'text') {
-            return node.text || '';
-          }
-          if (node.content) {
-            return node.content.map(extractText).join('');
-          }
-          return '';
-        };
-        contentText = extractText(questionContent).trim();
-      } else {
-        contentText = formData.question.trim();
-      }
+      const questionContent = formData.question.trim();
       
-      if (!contentText) {
+      if (!questionContent) {
         alert('질문 내용을 입력해주세요.');
         return;
       }
 
-      const content = contentText;
+      // 제목은 사용하지 않음 (API에서 content의 첫 부분을 title로 자동 설정)
+      const title = '';
+      const content = questionContent;
 
-      // Gemini API로 제목과 태그 자동 생성
-      let title = '';
+      // Gemini API로 태그 자동 분류
       let classification = null;
-
-      try {
-        // 제목 생성과 태그 분류를 병렬로 처리
-        const [titleResponse, categorizeResponse] = await Promise.all([
-          fetch('/api/admin/questions/generate-title', {
+      if (!formData.category) {
+        try {
+          const categorizeResponse = await fetch('/api/admin/questions/categorize', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ question: content }),
-          }),
-          fetch('/api/admin/questions/categorize', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ question: content }),
-          }),
-        ]);
+          });
 
-        // 제목 생성 결과 처리
-        if (titleResponse.ok) {
-          const titleData = await titleResponse.json();
-          title = titleData.title || content.substring(0, 50).trim() || '질문';
-        } else {
-          // 폴백: content의 첫 50자 사용
-          title = content.substring(0, 50).trim() || '질문';
+          if (categorizeResponse.ok) {
+            const categorizeData = await categorizeResponse.json();
+            classification = categorizeData.classification || null;
+          }
+        } catch (err) {
+          console.error('태그 자동 분류 실패:', err);
+          // 태그 분류 실패해도 질문 생성은 계속 진행
         }
-
-        // 태그 분류 결과 처리
-        if (categorizeResponse.ok) {
-          const categorizeData = await categorizeResponse.json();
-          classification = categorizeData.classification || null;
-        }
-      } catch (err) {
-        console.error('제목/태그 자동 생성 실패:', err);
-        // 실패 시 폴백 값 사용
-        title = content.substring(0, 50).trim() || '질문';
       }
 
       // 기존 category 필드는 호환성을 위해 유지 (primary_topic으로 매핑)
@@ -185,22 +148,21 @@ export default function EventQuestionsPage() {
       const response = await fetch('/api/admin/questions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            event_id: eventId,
-            title,
-            content: questionContent ? JSON.stringify(questionContent) : content, // JSONContent를 문자열로 저장
-            content_text: content, // 텍스트 버전도 저장 (검색/표시용)
-            category, // 호환성 유지
-            // 새로운 태그 필드
-            primary_topic: classification?.primary_topic || null,
-            secondary_topics: classification?.secondary_topics || [],
-            intent: classification?.intent || null,
-            confidence: classification?.confidence || null,
-            classified_by: classification ? 'gemini' : null,
-            display_name_raw: formData.display_name_raw || null,
-            display_name_masked: formData.display_name_masked || null,
-            tags: classification?.keywords || [],
-          }),
+        body: JSON.stringify({
+          event_id: eventId,
+          title,
+          content,
+          category, // 호환성 유지
+          // 새로운 태그 필드
+          primary_topic: classification?.primary_topic || null,
+          secondary_topics: classification?.secondary_topics || [],
+          intent: classification?.intent || null,
+          confidence: classification?.confidence || null,
+          classified_by: classification ? 'gemini' : null,
+          display_name_raw: formData.display_name_raw || null,
+          display_name_masked: formData.display_name_masked || null,
+          tags: classification?.keywords || [],
+        }),
       });
 
       const data = await response.json();
@@ -244,28 +206,28 @@ export default function EventQuestionsPage() {
           <div className="flex items-center gap-4 mb-6">
             <Link
               href="/admin/events"
-              className="text-slate-400 hover:text-white transition-colors"
+              className="text-gray-600 hover:text-gray-900"
             >
               <ArrowLeft className="w-5 h-5" />
             </Link>
             <div>
-              <h1 className="text-3xl font-bold text-white">
+              <h1 className="text-3xl font-bold text-gray-900">
                 질문 관리
               </h1>
               {event && (
-                <p className="text-sm text-slate-400 mt-1">{event.title}</p>
+                <p className="text-sm text-gray-500 mt-1">{event.title}</p>
               )}
             </div>
           </div>
 
           {error && (
-            <div className="mb-4 p-4 bg-red-900/20 border border-red-800 rounded text-red-300">
+            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded text-red-800">
               {error}
             </div>
           )}
 
           <div className="flex justify-between items-center mb-6">
-            <div className="text-sm text-slate-400">
+            <div className="text-sm text-gray-600">
               총 {questions.length}개의 질문
             </div>
             <button
@@ -278,47 +240,47 @@ export default function EventQuestionsPage() {
           </div>
 
           {loading ? (
-            <div className="text-center py-12 text-slate-400">로딩 중...</div>
+            <div className="text-center py-12">로딩 중...</div>
           ) : (
-            <div className="bg-slate-900 rounded-lg border border-slate-800 overflow-hidden">
-              <table className="min-w-full divide-y divide-slate-800">
-                <thead className="bg-slate-800">
+            <div className="bg-white rounded-lg shadow overflow-hidden">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       제목
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       태그
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       작성자
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       좋아요
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       작성일
                     </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-slate-400 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                       작업
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-slate-900 divide-y divide-slate-800">
+                <tbody className="bg-white divide-y divide-gray-200">
                   {questions.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
+                      <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
                         등록된 질문이 없습니다.
                       </td>
                     </tr>
                   ) : (
                     questions.map((question) => (
-                      <tr key={question.id} className="hover:bg-slate-800 transition-colors">
+                      <tr key={question.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4">
-                          <div className="text-sm font-medium text-white max-w-md truncate">
+                          <div className="text-sm font-medium text-gray-900 max-w-md truncate">
                             {question.title}
                           </div>
-                          <div className="text-xs text-slate-400 mt-1 max-w-md truncate">
+                          <div className="text-xs text-gray-500 mt-1 max-w-md truncate">
                             {question.content}
                           </div>
                         </td>
@@ -326,7 +288,7 @@ export default function EventQuestionsPage() {
                           <div className="flex flex-wrap gap-1">
                             {question.primary_topic && 
                               splitCompoundTag(question.primary_topic).map((tag, idx) => (
-                                <span key={`primary-${idx}`} className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-900/30 text-blue-400 border border-blue-800">
+                                <span key={`primary-${idx}`} className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
                                   {tag}
                                 </span>
                               ))
@@ -334,7 +296,7 @@ export default function EventQuestionsPage() {
                             {question.secondary_topics && question.secondary_topics.length > 0 && 
                               question.secondary_topics.flatMap(topic => 
                                 splitCompoundTag(topic).map((tag, idx) => (
-                                  <span key={`secondary-${topic}-${idx}`} className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-slate-800 text-slate-300 border border-slate-700">
+                                  <span key={`secondary-${topic}-${idx}`} className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-gray-100 text-gray-700">
                                     {tag}
                                   </span>
                                 ))
@@ -342,28 +304,28 @@ export default function EventQuestionsPage() {
                             }
                             {question.intent && 
                               splitCompoundTag(question.intent).map((tag, idx) => (
-                                <span key={`intent-${idx}`} className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-purple-900/30 text-purple-400 border border-purple-800">
+                                <span key={`intent-${idx}`} className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-purple-100 text-purple-700">
                                   {tag}
                                 </span>
                               ))
                             }
                             {!question.primary_topic && !question.intent && (
-                              <span className="text-sm text-slate-500">-</span>
+                              <span className="text-sm text-gray-400">-</span>
                             )}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-slate-400">
+                          <div className="text-sm text-gray-500">
                             {question.display_name_masked || question.display_name_raw || '-'}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-slate-400">
+                          <div className="text-sm text-gray-500">
                             {question.like_count}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-slate-400">
+                          <div className="text-sm text-gray-500">
                             {new Date(question.created_at).toLocaleDateString('ko-KR')}
                           </div>
                         </td>
@@ -371,13 +333,13 @@ export default function EventQuestionsPage() {
                           <div className="flex justify-end gap-2">
                             <Link
                               href={`/admin/questions/${question.id}`}
-                              className="text-blue-400 hover:text-blue-300 transition-colors"
+                              className="text-blue-600 hover:text-blue-900"
                             >
                               <Edit className="w-4 h-4" />
                             </Link>
                             <button
                               onClick={() => handleDelete(question.id)}
-                              className="text-red-400 hover:text-red-300 transition-colors"
+                              className="text-red-600 hover:text-red-900"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -393,29 +355,32 @@ export default function EventQuestionsPage() {
 
           {/* 생성 모달 */}
           {showCreateModal && (
-            <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-              <div className="bg-slate-900 border border-slate-800 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
                 <div className="p-6">
-                  <h2 className="text-2xl font-bold mb-4 text-white">새 질문 생성</h2>
+                  <h2 className="text-2xl font-bold mb-4">새 질문 생성</h2>
                   <form onSubmit={handleCreate}>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
                           질문 *
                         </label>
-                        <div className="border border-slate-700 rounded-md overflow-hidden bg-slate-800">
-                          <BlogEditor
-                            content={questionContent}
-                            onChange={setQuestionContent}
-                            placeholder="질문을 입력하세요..."
-                          />
-                        </div>
-                        <p className="mt-1 text-xs text-slate-400">
-                          질문 내용이 자동으로 제목과 태그로 분류됩니다. 이미지도 업로드할 수 있습니다.
+                        <textarea
+                          value={formData.question}
+                          onChange={(e) =>
+                            setFormData({ ...formData, question: e.target.value })
+                          }
+                          rows={8}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="질문을 입력하세요..."
+                          required
+                        />
+                        <p className="mt-1 text-xs text-gray-500">
+                          질문 내용이 자동으로 카테고리로 분류됩니다.
                         </p>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
                           카테고리
                         </label>
                         <input
@@ -424,12 +389,12 @@ export default function EventQuestionsPage() {
                           onChange={(e) =>
                             setFormData({ ...formData, category: e.target.value })
                           }
-                          className="w-full px-3 py-2 border border-slate-700 bg-slate-800 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                           placeholder="Tech/Dev, Business, Career 등"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
                           작성자 이름 (원본)
                         </label>
                         <input
@@ -438,11 +403,11 @@ export default function EventQuestionsPage() {
                           onChange={(e) =>
                             setFormData({ ...formData, display_name_raw: e.target.value })
                           }
-                          className="w-full px-3 py-2 border border-slate-700 bg-slate-800 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
                           작성자 이름 (마스킹)
                         </label>
                         <input
@@ -451,7 +416,7 @@ export default function EventQuestionsPage() {
                           onChange={(e) =>
                             setFormData({ ...formData, display_name_masked: e.target.value })
                           }
-                          className="w-full px-3 py-2 border border-slate-700 bg-slate-800 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
                     </div>
@@ -459,7 +424,7 @@ export default function EventQuestionsPage() {
                       <button
                         type="button"
                         onClick={resetForm}
-                        className="px-4 py-2 border border-slate-700 rounded-md text-slate-300 hover:bg-slate-800 transition"
+                        className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition"
                       >
                         취소
                       </button>

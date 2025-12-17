@@ -56,11 +56,14 @@ export default function QuestionCard({ question, onLike, liked = false, onClick 
   };
 
   return (
-    <div className="group bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-purple-500/50 transition-all hover:shadow-lg hover:shadow-purple-900/10 animate-fade-in-down">
+    <div 
+      className="group bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-purple-500/50 transition-all hover:shadow-lg hover:shadow-purple-900/10 animate-fade-in-down cursor-pointer"
+      onClick={onClick}
+    >
       <div className="flex justify-between items-start mb-3">
         <div className="flex items-center gap-2">
           {question.category && (
-            <span className="px-2 py-0.5 bg-slate-800 text-slate-300 text-xs rounded border border-slate-700 font-mono">
+            <span className="px-2 py-0.5 bg-slate-800 text-slate-400 text-xs rounded border border-slate-700 font-mono">
               #{question.category}
             </span>
           )}
@@ -71,15 +74,12 @@ export default function QuestionCard({ question, onLike, liked = false, onClick 
           )}
         </div>
         <button
-          onClick={(e) => {
-            e.stopPropagation();
-            handleCopy();
-          }}
+          onClick={handleCopy}
           className={cn(
             'flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium transition-colors border',
             copied
               ? 'bg-green-600 text-white border-green-500'
-              : 'bg-slate-800 hover:bg-purple-600 text-slate-200 hover:text-white border-slate-700 hover:border-purple-500'
+              : 'bg-slate-800 hover:bg-purple-600 text-slate-300 hover:text-white border-slate-700 hover:border-purple-500'
           )}
           title="LLM용 프롬프트 복사"
         >
@@ -88,33 +88,22 @@ export default function QuestionCard({ question, onLike, liked = false, onClick 
         </button>
       </div>
 
-      <div onClick={onClick} className="cursor-pointer">
-        <h3 className="text-lg font-bold text-white mb-2 leading-snug group-hover:text-purple-300 transition-colors">
-          {question.title}
-        </h3>
-        <p className="text-slate-200 text-sm mb-4 leading-relaxed line-clamp-3">{question.content}</p>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onClick?.();
-          }}
-          className="text-purple-400 hover:text-purple-300 text-sm font-medium mt-2 transition-colors"
-        >
-          자세히 보기 →
-        </button>
-      </div>
+      <h3 className="text-lg font-bold text-white mb-2 leading-snug group-hover:text-purple-300 transition-colors cursor-pointer">
+        {question.title}
+      </h3>
+      <p className="text-slate-400 text-sm mb-4 leading-relaxed line-clamp-3">{question.content}</p>
 
       {question.answer && (
         <div className="mb-4 bg-slate-800/50 rounded-lg p-3 border-l-2 border-green-500">
           <div className="flex items-center gap-2 mb-1 text-xs text-green-400 font-bold">
             <MessageCircle className="w-3 h-3" /> EXPERT ANSWER
           </div>
-          <p className="text-slate-200 text-sm line-clamp-2">{question.answer}</p>
+          <p className="text-slate-300 text-sm line-clamp-2">{question.answer}</p>
         </div>
       )}
 
       <div className="flex items-center justify-between border-t border-slate-800 pt-3 mt-2">
-        <div className="flex gap-4 text-sm text-slate-300">
+        <div className="flex gap-4 text-sm text-slate-500">
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -123,20 +112,20 @@ export default function QuestionCard({ question, onLike, liked = false, onClick 
             disabled={liked || isLiking}
             className={cn(
               'flex items-center gap-1.5 transition-colors',
-              liked ? 'text-purple-400' : 'text-slate-300 hover:text-purple-400'
+              liked ? 'text-purple-400' : 'hover:text-purple-400'
             )}
           >
             <ThumbsUp className={cn('w-4 h-4', liked && 'fill-current')} />
             <span>{question.like_count}</span>
           </button>
           {question.comments !== undefined && (
-            <div className="flex items-center gap-1.5 text-slate-300">
+            <div className="flex items-center gap-1.5">
               <MessageCircle className="w-4 h-4" />
               <span>{question.comments}</span>
             </div>
           )}
         </div>
-        <span className="text-xs text-slate-400 font-mono">{formatDate(question.created_at)}</span>
+        <span className="text-xs text-slate-600 font-mono">{formatDate(question.created_at)}</span>
       </div>
     </div>
   );

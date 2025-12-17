@@ -20,7 +20,6 @@ const sampleQuestions = [
     answer:
       "System Prompt에 '모르면 모른다고 대답하라'는 제약 조건을 강력하게 걸고, Temperature를 0에 가깝게 설정하세요. 검색된 청크(Chunk)의 신뢰도 점수를 필터링하는 단계가 필요합니다.",
     category: 'Tech/Dev',
-    vote_count: 42,
     like_count: 42,
     comments: 5,
     created_at: '2025-12-10T00:00:00Z',
@@ -33,7 +32,6 @@ const sampleQuestions = [
       '개발 지식이 얕은 기획자입니다. Cursor나 v0 같은 툴만 믿고 SaaS를 만들어보려고 하는데, 실제 운영 단계에서 AI 에이전트만으로 유지보수가 가능할지 현실적인 조언 부탁드립니다.',
     answer: null,
     category: 'Business',
-    vote_count: 38,
     like_count: 38,
     comments: 12,
     created_at: '2025-12-12T00:00:00Z',
@@ -47,7 +45,6 @@ const sampleQuestions = [
     answer:
       "단순한 프롬프트 작성이 아니라, AI 워크플로우를 설계하고 평가(Eval)하는 'AI 오케스트레이터'로 역할이 진화하고 있습니다.",
     category: 'Career',
-    vote_count: 31,
     like_count: 31,
     comments: 8,
     created_at: '2025-12-14T00:00:00Z',
@@ -60,7 +57,6 @@ const sampleQuestions = [
       '직원들이 ChatGPT에 기밀 데이터를 넣는 걸 막을 수가 없습니다. 엔터프라이즈 버전을 쓰는 것 외에 정책적으로나 기술적으로 제어할 수 있는 방법이 궁금합니다.',
     answer: null,
     category: 'Ethics',
-    vote_count: 25,
     like_count: 25,
     comments: 3,
     created_at: '2025-12-11T00:00:00Z',
@@ -74,7 +70,6 @@ const sampleQuestions = [
     answer:
       '아직 명확한 국제 표준은 없으나, 인간의 창작적 기여가 인정되는 부분에 한해 저작권을 인정하는 추세입니다.',
     category: 'Ethics',
-    vote_count: 19,
     like_count: 19,
     comments: 2,
     created_at: '2025-12-09T00:00:00Z',
@@ -107,7 +102,7 @@ export default function SampleBoardPage() {
     })
     .sort((a, b) => {
       if (sortBy === 'hot') {
-        return b.vote_count - a.vote_count;
+        return (b.like_count || 0) - (a.like_count || 0);
       } else if (sortBy === 'new') {
         return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
       } else if (sortBy === 'answered') {
@@ -116,16 +111,16 @@ export default function SampleBoardPage() {
       return 0;
     });
 
-  // Handle vote (샘플이므로 로컬 상태만 업데이트)
-  const handleVote = async (questionId: string) => {
+  // Handle like (샘플이므로 로컬 상태만 업데이트)
+  const handleLike = async (questionId: string) => {
     if (votedQuestions.has(questionId)) {
-      setToast({ show: true, message: '이미 투표하신 질문입니다.' });
+      setToast({ show: true, message: '이미 좋아요를 누르신 질문입니다.' });
       return;
     }
 
     // Optimistic update
     setQuestions((prev) =>
-      prev.map((q) => (q.id === questionId ? { ...q, vote_count: q.vote_count + 1 } : q))
+      prev.map((q) => (q.id === questionId ? { ...q, like_count: (q.like_count || 0) + 1 } : q))
     );
     setVotedQuestions((prev) => new Set([...prev, questionId]));
     setToast({ show: true, message: '👍 소중한 한 표가 반영되었습니다!' });
@@ -247,9 +242,7 @@ export default function SampleBoardPage() {
               <QuestionCard
                 key={question.id}
                 question={question}
-                onLike={async (id) => {
-                  await handleVote(id);
-                }}
+                onLike={handleLike}
                 liked={votedQuestions.has(question.id)}
               />
             ))}

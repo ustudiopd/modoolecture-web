@@ -7,7 +7,6 @@ import Navbar from '@/components/Navbar';
 import Toast from '@/components/ui/Toast';
 import QuestionCard from '@/components/board/QuestionCard';
 import QuestionModal from '@/components/board/QuestionModal';
-import QuestionForm from '@/components/board/QuestionForm';
 import CategoryFilter from '@/components/board/CategoryFilter';
 import { ArrowLeft, Search, MessageCircle, ExternalLink, Plus, SearchX } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
@@ -29,7 +28,6 @@ export default function BoardPage() {
   const [likedQuestions, setLikedQuestions] = useState<Set<string>>(new Set());
   const [selectedQuestion, setSelectedQuestion] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isFormOpen, setIsFormOpen] = useState(false);
 
   // Get session ID
   const getSessionId = useCallback(() => {
@@ -327,62 +325,22 @@ export default function BoardPage() {
       {/* Floating Action Button (Mobile) */}
       <div className="fixed bottom-6 right-6 md:hidden z-30">
         <button
-          onClick={() => setIsFormOpen(true)}
+          onClick={() => setToast({ show: true, message: '질문 등록 기능은 준비 중입니다!' })}
           className="bg-purple-600 text-white p-4 rounded-full shadow-lg shadow-purple-900/50 hover:bg-purple-500 transition-transform active:scale-95"
         >
           <Plus className="w-6 h-6" />
         </button>
       </div>
 
-      {/* Desktop Question Form Button */}
-      <div className="hidden md:block fixed bottom-6 right-6 z-30">
-        <button
-          onClick={() => setIsFormOpen(true)}
-          className="bg-purple-600 text-white px-6 py-3 rounded-full shadow-lg shadow-purple-900/50 hover:bg-purple-500 transition-all font-medium flex items-center gap-2"
-        >
-          <Plus className="w-5 h-5" />
-          질문 등록
-        </button>
-      </div>
-
       {/* Question Modal */}
       <QuestionModal
         question={selectedQuestion}
-        questions={filteredQuestions}
         isOpen={isModalOpen}
         onClose={() => {
           setIsModalOpen(false);
           setSelectedQuestion(null);
         }}
-        onQuestionChange={(question) => {
-          setSelectedQuestion(question);
-        }}
       />
-
-      {/* Question Form */}
-      {isFormOpen && event && (
-        <QuestionForm
-          eventId={event.id}
-          onClose={() => setIsFormOpen(false)}
-          onSubmit={async () => {
-            // 질문 목록 새로고침
-            try {
-              const { data: questionsData, error: questionsError } = await supabase
-                .from('modu_questions')
-                .select('*')
-                .eq('event_id', event.id)
-                .eq('is_hidden', false)
-                .order('created_at', { ascending: false });
-
-              if (questionsError) throw questionsError;
-              setQuestions(questionsData || []);
-              setToast({ show: true, message: '질문이 등록되었습니다!' });
-            } catch (error) {
-              console.error('Error refreshing questions:', error);
-            }
-          }}
-        />
-      )}
     </div>
   );
 }
